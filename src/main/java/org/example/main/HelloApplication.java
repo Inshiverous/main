@@ -177,7 +177,7 @@ public class HelloApplication extends Application {
         rect.setStroke(strokeColor);
 
         ImageView imageView = new ImageView(image);
-        imageView.setFitWidth(580);
+        imageView.setFitWidth(590);
         imageView.setFitHeight(300);
         imageView.setPreserveRatio(true);
 
