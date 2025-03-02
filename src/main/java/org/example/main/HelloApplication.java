@@ -224,6 +224,7 @@ public class HelloApplication extends Application {
             targetRect.toFront();
         });
 
+        button.setAlignment(Pos.CENTER);
         return button;
     }
     public static void main(String[] args) {
