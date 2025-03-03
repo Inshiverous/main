@@ -133,7 +133,7 @@ public class HelloApplication extends Application {
         setContentOpacity(mainMenuRectangle, 1);
 
         // Initialize buttons
-        beginPlanningButton = createButton("Your Mom", worldMapMainMenuImageFrame, stack);
+        beginPlanningButton = createButton("Begin Planning", worldMapMainMenuImageFrame, stack);
         creditsButton = createButton("Credits/Sources", creditsInfoBox, stack);
         projectInfoButton = createButton("Project Info.", projectInfoBox, stack);
 
