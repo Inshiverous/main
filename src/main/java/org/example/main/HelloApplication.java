@@ -10,6 +10,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -26,7 +27,9 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import javax.print.attribute.standard.MediaSize;
 import java.io.IOException;
+import java.util.Stack;
 
 /**
  * Main application class for the Firm Locator project.
@@ -39,6 +42,13 @@ public class HelloApplication extends Application {
     private Image worldMapImage;
     private Image backImage;
 
+    private Image northAmericaImage;
+    private Image centralAmericaImage;
+    private Image southAmericaImage;
+    private Image europeImage;
+    private Image asiaImage;
+    private Image africaImage;
+    private Image oceaniaImage;
     ///// --- Shape Elements
 
     /// Rectangles
@@ -57,6 +67,16 @@ public class HelloApplication extends Application {
 
     // Back buttons
     private Button backButtonInScene2;
+
+    // Region Pick Scene
+
+    private Button NAButton;
+    private Button CAButton; // Central America
+    private Button SAButton;
+    private Button EUButton;
+    private Button AFButton;
+    private Button ASButton;
+    private Button OCButton;
 
     /// Labels
     // Main Menu Scene (scene1)
@@ -77,17 +97,16 @@ public class HelloApplication extends Application {
     public void start(Stage stage) throws IOException {
 
         // Assigns image variables their images to be loaded.
-        try { // Image that displays a map of the Earth.
-            worldMapImage = new Image(getClass().getResource("/worldmap.png").toExternalForm());
-        } catch (Exception e) {
-            System.out.println("Error loading WORLDMAP image: " + e.getMessage());
-        }
+        worldMapImage = getImage("worldmap.png");
+        backImage = getImage("back.jpg");
 
-        try { // Image for buttons that take the user back a scene.
-            backImage = new Image(getClass().getResource("/back.jpg").toExternalForm());
-        } catch (Exception e) {
-            System.out.println("Error loading BACKBUTTON image: " + e.getMessage());
-        }
+        northAmericaImage = getImage("NABlank.png");
+        centralAmericaImage = getImage("CABlank.png");
+        southAmericaImage = getImage("SABlank.png");
+        europeImage = getImage("EUBlank.jpeg");
+        asiaImage = getImage("ASBlank.png");
+        africaImage = getImage("AFBlank.png");
+        oceaniaImage = getImage("OCBlank.jpeg");
 
         // Creates shapes & assigns their images
 
@@ -137,14 +156,7 @@ public class HelloApplication extends Application {
         creditsButton = createButton("Credits/Sources", creditsInfoBox, stack);
         projectInfoButton = createButton("Project Info.", projectInfoBox, stack);
 
-        /// Back Buttons
 
-        // Back Button In Scene 2 (Region Select Scene)
-        backButtonInScene2 = new Button();
-        backButtonInScene2.setGraphic(backCircle); // Sets the image of the back button in scene 2 to the back button image.
-        backButtonInScene2.setStyle("-fx-background-color:transparent; -fx-border-color: transparent; -fx-padding: 67px 150");
-        backButtonInScene2.setAlignment(Pos.TOP_LEFT);
-        // Back Button In Scene 3
 
 
 
@@ -158,13 +170,24 @@ public class HelloApplication extends Application {
         // Fade into the default rectangle whenever a button is not being hovered over
         leftAppElementsLayout.setOnMouseExited(e -> fadeEffect(mainMenuRectangle));
 
-        // Scene initialization
+        /// Main Menu Scene initialization
 
         HBox rootMainMenu = new HBox(50, leftAppElementsLayout, stack);
         Scene scene1 = new Scene(rootMainMenu, 1280, 960);
 
 
-        // Region Pick Scene
+
+        /// Back Buttons
+
+        // Back Button In Scene 2 (Region Select Scene)
+        backButtonInScene2 = new Button();
+        backButtonInScene2.setGraphic(backCircle); // Sets the image of the back button in scene 2 to the back button image.
+        backButtonInScene2.setStyle("-fx-background-color:transparent; -fx-border-color: transparent; -fx-padding: 67px 150");
+        backButtonInScene2.setAlignment(Pos.TOP_LEFT);
+        // Back Button In Scene 3
+
+
+        /// Region Pick Scene
         regionPickGuideLabel = new Label("Where do you want your firm?");
         regionPickGuideLabel.setStyle("-fx-background-color: ivory; " +
                 "-fx-background-radius: 14; " +
@@ -173,19 +196,61 @@ public class HelloApplication extends Application {
                 "-fx-font-size: 50px;" +
                 "-fx-font-weight: bold;");
 
+
+
         VBox regionPickLayout = new VBox(10, worldMapRegionPickFrame);
         regionPickLayout.setStyle("-fx-padding: 20; -fx-alignment: center; -fx-font-size: 16;");
         regionPickLayout.setAlignment(Pos.CENTER);
 
         StackPane rootRegionPick = new StackPane();
         rootRegionPick.getChildren().addAll(backButtonInScene2, regionPickGuideLabel, regionPickLayout);
-        regionPickLayout.toBack();
         StackPane.setAlignment(backButtonInScene2,Pos.TOP_LEFT);
+        // Scene Buttons
+        NAButton = createButtonAt(rootRegionPick, "NA", 250, 300, Color.BLUE);
+        NAButton.setTextFill(Color.BLUE);
+
+        CAButton = createButtonAt(rootRegionPick, "CA", 250, 400, Color.PURPLE);
+        CAButton.setTextFill(Color.PURPLE);
+
+        SAButton = createButtonAt(rootRegionPick, "SA", 350, 525, Color.RED);
+        SAButton.setTextFill(Color.RED);
+
+        EUButton = createButtonAt(rootRegionPick, "EU", 575, 300, Color.GREEN);
+        EUButton.setTextFill(Color.GREEN);
+
+        AFButton = createButtonAt(rootRegionPick, "AF", 565, 410, Color.ORANGE);
+        AFButton.setTextFill(Color.ORANGE);
+
+        ASButton = createButtonAt(rootRegionPick, "AS", 800, 325, Color.BROWN);
+        ASButton.setTextFill(Color.BROWN);
+
+        OCButton = createButtonAt(rootRegionPick, "OC", 925, 560, Color.CYAN);
+        OCButton.setTextFill(Color.CYAN);
+
+
+
+
 
         StackPane.setAlignment(regionPickGuideLabel, Pos.TOP_CENTER);
         StackPane.setMargin(regionPickGuideLabel, new Insets(50, 0, 0, 0));
 
+        regionPickLayout.toBack();
         Scene scene2 = new Scene(rootRegionPick, 1280, 960);
+
+
+        /// Region Scenes
+
+        // North America Scene
+
+        // South America Scene
+
+        // Europe Scene
+
+        // Africa Scene
+
+        // Asia Scene
+
+        // Oceania Scene
 
 
         beginPlanningButton.setOnMouseClicked(e -> {
@@ -294,7 +359,8 @@ public class HelloApplication extends Application {
                 "-fx-border-width: 10; " +
                 "-fx-padding: 10px 20px;" +
                 "-fx-font-size: 50px;" +
-                "-fx-font-weight: bold;");
+                "-fx-font-weight: bold;" +
+                "-fx-border-radius: 5;");
 
         button.setOnMouseEntered(e -> { // Display a different element when the button is hovered over.
             fadeEffect(targetRect);
@@ -403,6 +469,43 @@ public class HelloApplication extends Application {
             }
         }
         return null; // No label found
+    }
+
+    public static Button createButtonAt(StackPane pane, String text, double x, double y, Color textColor) {
+        Button button = new Button(text);
+        button.setTranslateX(x);
+        button.setTranslateY(y);
+        button.setTextFill(textColor);
+        setStyleTheme(button);
+        pane.getChildren().add(button);
+        StackPane.setAlignment(button, Pos.TOP_LEFT);
+
+        return button;
+    }
+
+    private static void setStyleTheme(Button button) {
+        button.setStyle("-fx-background-color: ivory; " +
+                "-fx-background-radius: 14; " +
+                "-fx-border-color: black;" +
+                "-fx-border-width: 5; " +
+                "-fx-font-size: 10px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-border-radius: 5;");
+    }
+
+
+    /**
+     * Helper method to create an image object from a file.
+     * @param fileName The target file name for the image to use.
+     * @return The image that was created from the file name.
+     */    private Image getImage(String fileName) {
+        Image image = null;
+        try { // Image that displays a map of the Earth.
+            image = new Image(getClass().getResource("/"+fileName).toExternalForm());
+        } catch (Exception e) {
+            System.out.println("Error loading" + fileName + "image: " + e.getMessage());
+        }
+        return image;
     }
 
     public static void main(String[] args) {
