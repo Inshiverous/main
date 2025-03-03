@@ -18,6 +18,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -36,6 +37,7 @@ public class HelloApplication extends Application {
 
     /// --- Images
     private Image worldMapImage;
+    private Image backImage;
 
     ///// --- Shape Elements
 
@@ -53,8 +55,18 @@ public class HelloApplication extends Application {
     private Button creditsButton;
     private Button projectInfoButton;
 
+    // Back buttons
+    private Button backButtonInScene2;
+
     /// Labels
-    private Label titleLabel;
+    // Main Menu Scene (scene1)
+//    private Label titleLabel;
+
+    // Region Pick Scene (scene2)
+    private Label regionPickGuideLabel;
+
+    /// Circles
+    private Circle backCircle;
 
     /// ///--------------------------------------------------------------------------------------------------------/// ///
     /**
@@ -65,10 +77,16 @@ public class HelloApplication extends Application {
     public void start(Stage stage) throws IOException {
 
         // Assigns image variables their images to be loaded.
-        try {
+        try { // Image that displays a map of the Earth.
             worldMapImage = new Image(getClass().getResource("/worldmap.png").toExternalForm());
         } catch (Exception e) {
             System.out.println("Error loading WORLDMAP image: " + e.getMessage());
+        }
+
+        try { // Image for buttons that take the user back a scene.
+            backImage = new Image(getClass().getResource("/back.jpg").toExternalForm());
+        } catch (Exception e) {
+            System.out.println("Error loading BACKBUTTON image: " + e.getMessage());
         }
 
         // Creates shapes & assigns their images
@@ -76,6 +94,10 @@ public class HelloApplication extends Application {
         // region picking scene
         worldMapRegionPickFrame = new Rectangle(1000, 497);
         worldMapRegionPickFrame.setFill(new ImagePattern(worldMapImage));
+
+        // Back Button Circle
+        backCircle = new Circle(20);
+        backCircle.setFill(new ImagePattern(backImage));
 
         ////---- App Layout
 
@@ -115,6 +137,17 @@ public class HelloApplication extends Application {
         creditsButton = createButton("Credits/Sources", creditsInfoBox, stack);
         projectInfoButton = createButton("Project Info.", projectInfoBox, stack);
 
+        /// Back Buttons
+
+        // Back Button In Scene 2 (Region Select Scene)
+        backButtonInScene2 = new Button();
+        backButtonInScene2.setGraphic(backCircle); // Sets the image of the back button in scene 2 to the back button image.
+        backButtonInScene2.setStyle("-fx-background-color:transparent; -fx-border-color: transparent; -fx-padding: 67px 150");
+        backButtonInScene2.setAlignment(Pos.TOP_LEFT);
+        // Back Button In Scene 3
+
+
+
         // Button Layout
         VBox leftAppElementsLayout = new VBox(90);
         leftAppElementsLayout.getChildren().addAll(beginPlanningButton, creditsButton, projectInfoButton);
@@ -126,23 +159,51 @@ public class HelloApplication extends Application {
         leftAppElementsLayout.setOnMouseExited(e -> fadeEffect(mainMenuRectangle));
 
         // Scene initialization
+
         HBox rootMainMenu = new HBox(50, leftAppElementsLayout, stack);
         Scene scene1 = new Scene(rootMainMenu, 1280, 960);
 
+
         // Region Pick Scene
+        regionPickGuideLabel = new Label("Where do you want your firm?");
+        regionPickGuideLabel.setStyle("-fx-background-color: ivory; " +
+                "-fx-background-radius: 14; " +
+                "-fx-border-color: black;" +
+                "-fx-border-width: 5; " +
+                "-fx-font-size: 50px;" +
+                "-fx-font-weight: bold;");
+
         VBox regionPickLayout = new VBox(10, worldMapRegionPickFrame);
         regionPickLayout.setStyle("-fx-padding: 20; -fx-alignment: center; -fx-font-size: 16;");
         regionPickLayout.setAlignment(Pos.CENTER);
 
         StackPane rootRegionPick = new StackPane();
-        rootRegionPick.getChildren().add(regionPickLayout);
+        rootRegionPick.getChildren().addAll(backButtonInScene2, regionPickGuideLabel, regionPickLayout);
+        regionPickLayout.toBack();
+        StackPane.setAlignment(backButtonInScene2,Pos.TOP_LEFT);
+
+        StackPane.setAlignment(regionPickGuideLabel, Pos.TOP_CENTER);
+        StackPane.setMargin(regionPickGuideLabel, new Insets(50, 0, 0, 0));
 
         Scene scene2 = new Scene(rootRegionPick, 1280, 960);
-        rootRegionPick.setStyle("-fx-background-color: lightgray;");
+
+
+        beginPlanningButton.setOnMouseClicked(e -> {
+            stage.setScene(scene2);
+        });
+
+        backButtonInScene2.setOnMouseClicked(e -> {
+            stage.setScene(scene1);
+        });
 
         // Final Touches & Scene shown
         stage.setTitle("Firm Locator");
         stage.setScene(scene1);
+
+        stage.setWidth(1280);
+        stage.setHeight(960);
+        stage.setResizable(false);
+
         stage.show();
     }
 
@@ -263,19 +324,19 @@ public class HelloApplication extends Application {
         // Fade-out animation for current active elements
         Timeline fadeOut = new Timeline();
         if (activeImage != null) {
-            fadeOut.getKeyFrames().add(new KeyFrame(Duration.millis(300), new KeyValue(activeImage.opacityProperty(), 0)));
+            fadeOut.getKeyFrames().add(new KeyFrame(Duration.millis(150), new KeyValue(activeImage.opacityProperty(), 0)));
         }
         if (activeText != null) {
-            fadeOut.getKeyFrames().add(new KeyFrame(Duration.millis(300), new KeyValue(activeText.opacityProperty(), 0)));
+            fadeOut.getKeyFrames().add(new KeyFrame(Duration.millis(150), new KeyValue(activeText.opacityProperty(), 0)));
         }
 
         // Fade-in animation for target elements
         Timeline fadeIn = new Timeline();
         if (targetImage != null) {
-            fadeIn.getKeyFrames().add(new KeyFrame(Duration.millis(500), new KeyValue(targetImage.opacityProperty(), 1.0)));
+            fadeIn.getKeyFrames().add(new KeyFrame(Duration.millis(250), new KeyValue(targetImage.opacityProperty(), 1.0)));
         }
         if (targetText != null) {
-            fadeIn.getKeyFrames().add(new KeyFrame(Duration.millis(500), new KeyValue(targetText.opacityProperty(), 1.0)));
+            fadeIn.getKeyFrames().add(new KeyFrame(Duration.millis(250), new KeyValue(targetText.opacityProperty(), 1.0)));
         }
 
         // Ensure smooth transition: fade-in starts AFTER fade-out completes
