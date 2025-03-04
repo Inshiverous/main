@@ -5,9 +5,12 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -32,6 +35,7 @@ import javafx.util.Duration;
 import javax.print.attribute.standard.MediaSize;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Stack;
 
 /**
@@ -42,6 +46,7 @@ import java.util.Stack;
 public class HelloApplication extends Application {
 
     /// --- Images
+
     private Image worldMapImage;
     private Image backImage;
 
@@ -52,6 +57,7 @@ public class HelloApplication extends Application {
     private Image asiaImage;
     private Image africaImage;
     private Image oceaniaImage;
+
     ///// --- Shape Elements
 
     /// Rectangles
@@ -137,27 +143,27 @@ public class HelloApplication extends Application {
     public void start(Stage stage) throws IOException {
 
         // Assigns image variables their images to be loaded.
-        worldMapImage = getImage("worldmap.png");
+        worldMapImage = getImage("WMBlank.png");
         backImage = getImage("back.jpg");
 
         northAmericaImage = getImage("NABlank.jpg");
-        centralAmericaImage = getImage("CABlank.png");
+        centralAmericaImage = getImage("CABlank.jpg");
         southAmericaImage = getImage("SABlank.jpg");
-        europeImage = getImage("EUBlank.png");
-        asiaImage = getImage("ASBlank.png");
-        africaImage = getImage("AFBlank.png");
-        oceaniaImage = getImage("OCBlank.jpeg");
+        europeImage = getImage("EUBlank.jpg");
+        asiaImage = getImage("ASBlank.jpg");
+        africaImage = getImage("AFBlank.jpg");
+        oceaniaImage = getImage("OCBlank.jpg");
 
         /// Create shapes & assign their images
 
         // 3 : 4 or 4 : 3 (x200)
-        NAMap = new Rectangle(800, 800); // 1 : 1 exception
+        NAMap = new Rectangle(800, 600);
         NAMap.setFill(new ImagePattern(northAmericaImage));
 
         CAMap = new Rectangle(800, 600);
         CAMap.setFill(new ImagePattern(centralAmericaImage));
 
-        SAMap = new Rectangle(600, 800);
+        SAMap = new Rectangle(800, 600);
         SAMap.setFill(new ImagePattern(southAmericaImage));
 
         EUMap = new Rectangle(800, 600);
@@ -166,7 +172,7 @@ public class HelloApplication extends Application {
         ASMap = new Rectangle(800, 600);
         ASMap.setFill(new ImagePattern(asiaImage));
 
-        AFMap = new Rectangle(800, 800); // 1 : 1 exception
+        AFMap = new Rectangle(800, 600);
         AFMap.setFill(new ImagePattern(africaImage));
 
         OCMap = new Rectangle(800, 600);
@@ -194,7 +200,7 @@ public class HelloApplication extends Application {
                                                                "to semiconductors to the manufacturers of car parts.\n\n"+
                                                                "This project exists to encourage participation of new firms by displaying \n" +
                                                                "an array of firms to help supply the vertical stages to automotive production. \n\n" +
-                                                               "With participation in the market, shortages would fall and the automotive industry would\n" +
+                                                               "With healthy cooperation & participation in the market, shortages would\n fall and the automotive industry would " +
                                                                "skyrocket & boom in market value.", 20);
 
         mainMenuRectangle = createRectanglePane(Color.BLACK, "THE FIRM STARTUP", 60);
@@ -259,33 +265,20 @@ public class HelloApplication extends Application {
         rootRegionPick.getChildren().addAll(backButtonToMainMenu, regionPickGuideLabel, regionPickLayout);
         StackPane.setAlignment(backButtonToMainMenu,Pos.TOP_LEFT);
 
-
         // Region Scene Buttons
         NAButton = createButtonAt(rootRegionPick, "NA", 250, 300, Color.BLUE);
-
         CAButton = createButtonAt(rootRegionPick, "CA", 250, 400, Color.PURPLE);
-
         SAButton = createButtonAt(rootRegionPick, "SA", 350, 525, Color.RED);
-
         EUButton = createButtonAt(rootRegionPick, "EU", 575, 300, Color.GREEN);
-
         AFButton = createButtonAt(rootRegionPick, "AF", 565, 410, Color.ORANGE);
-
         ASButton = createButtonAt(rootRegionPick, "AS", 800, 325, Color.BROWN);
-
         OCButton = createButtonAt(rootRegionPick, "OC", 925, 560, Color.DARKCYAN);
-
-
-
-
 
         StackPane.setAlignment(regionPickGuideLabel, Pos.TOP_CENTER);
         StackPane.setMargin(regionPickGuideLabel, new Insets(50, 0, 0, 0));
 
         regionPickLayout.toBack();
         Scene regionPickScene = new Scene(rootRegionPick, 1280, 960);
-
-
 
 
         /// Region Scenes
@@ -302,8 +295,6 @@ public class HelloApplication extends Application {
         StackPane rootNAScene = new StackPane();
         rootNAScene.getChildren().addAll(backButtonToWorldMapNA, NAGuideLabel, NALayout);
         StackPane.setAlignment(backButtonToWorldMapNA, Pos.TOP_LEFT);
-
-
 
         StackPane.setAlignment(NAGuideLabel, Pos.TOP_CENTER);
         StackPane.setMargin(NAGuideLabel, new Insets(50, 0, 0, 0));
@@ -323,8 +314,6 @@ public class HelloApplication extends Application {
         rootCAScene.getChildren().addAll(backButtonToWorldMapCA, CAGuideLabel, CALayout);
         StackPane.setAlignment(backButtonToWorldMapCA, Pos.TOP_LEFT);
 
-
-
         StackPane.setAlignment(CAGuideLabel, Pos.TOP_CENTER);
         StackPane.setMargin(CAGuideLabel, new Insets(50, 0, 0, 0));
 
@@ -342,8 +331,6 @@ public class HelloApplication extends Application {
         StackPane rootSAScene = new StackPane();
         rootSAScene.getChildren().addAll(backButtonToWorldMapSA, SAGuideLabel, SALayout);
         StackPane.setAlignment(backButtonToWorldMapSA, Pos.TOP_LEFT);
-
-
 
         StackPane.setAlignment(SAGuideLabel, Pos.TOP_CENTER);
         StackPane.setMargin(SAGuideLabel, new Insets(50, 0, 0, 0));
@@ -363,8 +350,6 @@ public class HelloApplication extends Application {
         rootEUScene.getChildren().addAll(backButtonToWorldMapEU, EUGuideLabel, EULayout);
         StackPane.setAlignment(backButtonToWorldMapEU, Pos.TOP_LEFT);
 
-
-
         StackPane.setAlignment(EUGuideLabel, Pos.TOP_CENTER);
         StackPane.setMargin(EUGuideLabel, new Insets(50, 0, 0, 0));
 
@@ -382,8 +367,6 @@ public class HelloApplication extends Application {
         StackPane rootAFScene = new StackPane();
         rootAFScene.getChildren().addAll(backButtonToWorldMapAF, AFGuideLabel, AFLayout);
         StackPane.setAlignment(backButtonToWorldMapAF, Pos.TOP_LEFT);
-
-
 
         StackPane.setAlignment(AFGuideLabel, Pos.TOP_CENTER);
         StackPane.setMargin(AFGuideLabel, new Insets(50, 0, 0, 0));
@@ -403,8 +386,6 @@ public class HelloApplication extends Application {
         rootASIAScene.getChildren().addAll(backButtonToWorldMapAS, ASGuideLabel, ASLayout);
         StackPane.setAlignment(backButtonToWorldMapAS, Pos.TOP_LEFT);
 
-
-
         StackPane.setAlignment(ASGuideLabel, Pos.TOP_CENTER);
         StackPane.setMargin(ASGuideLabel, new Insets(50, 0, 0, 0));
 
@@ -423,8 +404,6 @@ public class HelloApplication extends Application {
         rootOCScene.getChildren().addAll(backButtonToWorldMapOC, OCGuideLabel, OCLayout);
         StackPane.setAlignment(backButtonToWorldMapOC, Pos.TOP_LEFT);
 
-
-
         StackPane.setAlignment(OCGuideLabel, Pos.TOP_CENTER);
         StackPane.setMargin(OCGuideLabel, new Insets(50, 0, 0, 0));
 
@@ -432,73 +411,34 @@ public class HelloApplication extends Application {
         Scene OCScene = new Scene(rootOCScene, 1280, 960);
 
 
-
         /// Mouse Events
-        beginPlanningButton.setOnMouseClicked(e -> {
-            fadeTransitionToScene(rootMainMenu, regionPickScene, rootRegionPick, stage);
-        });
-
-        backButtonToMainMenu.setOnMouseClicked(e -> {
-            fadeTransitionToScene(rootRegionPick, mainMenuScene, rootMainMenu, stage);
-        });
-
-        backButtonToWorldMapNA.setOnMouseClicked(e -> {
-            fadeTransitionToScene(stage.getScene().getRoot(), regionPickScene, rootRegionPick, stage);
-        });
-
-        backButtonToWorldMapCA.setOnMouseClicked(e -> {
-            fadeTransitionToScene(stage.getScene().getRoot(), regionPickScene, rootRegionPick, stage);
-        });
-
-        backButtonToWorldMapSA.setOnMouseClicked(e -> {
-            fadeTransitionToScene(stage.getScene().getRoot(), regionPickScene, rootRegionPick, stage);
-        });
-
-        backButtonToWorldMapEU.setOnMouseClicked(e -> {
-            fadeTransitionToScene(stage.getScene().getRoot(), regionPickScene, rootRegionPick, stage);
-        });
-
-        backButtonToWorldMapAS.setOnMouseClicked(e -> {
-            fadeTransitionToScene(stage.getScene().getRoot(), regionPickScene, rootRegionPick, stage);
-        });
-
-        backButtonToWorldMapAF.setOnMouseClicked(e -> {
-            fadeTransitionToScene(stage.getScene().getRoot(), regionPickScene, rootRegionPick, stage);
-        });
-
-        backButtonToWorldMapOC.setOnMouseClicked(e -> {
-            fadeTransitionToScene(stage.getScene().getRoot(), regionPickScene, rootRegionPick, stage);
-        });
 
 
-        NAButton.setOnMouseClicked(e -> {
-           fadeTransitionToScene(rootRegionPick, NAScene, rootNAScene, stage);
-        });
+        // Since all the region scenes' back buttons take the user back to the world map; they are able to be put into a for loop to enhance readability.
+        for (Button b : Arrays.asList(backButtonToWorldMapNA, backButtonToWorldMapCA, backButtonToWorldMapSA, backButtonToWorldMapEU, backButtonToWorldMapAS, backButtonToWorldMapAF, backButtonToWorldMapOC))
+            b.setOnMouseClicked(e -> {
+                fadeTransitionToScene(stage.getScene().getRoot(), regionPickScene, rootRegionPick, stage);
+            });
 
-        SAButton.setOnMouseClicked(e -> {
-            fadeTransitionToScene(rootRegionPick, SAScene, rootSAScene, stage);
-        });
+        beginPlanningButton.setOnMouseClicked(e -> fadeTransitionToScene(rootMainMenu, regionPickScene, rootRegionPick, stage));
+        backButtonToMainMenu.setOnMouseClicked(e -> fadeTransitionToScene(rootRegionPick, mainMenuScene, rootMainMenu, stage));
 
-        CAButton.setOnMouseClicked(e -> {
-            fadeTransitionToScene(rootRegionPick, CAScene, rootCAScene, stage);
-        });
+        NAButton.setOnMouseClicked(e -> fadeTransitionToScene(rootRegionPick, NAScene, rootNAScene, stage));
+        SAButton.setOnMouseClicked(e -> fadeTransitionToScene(rootRegionPick, SAScene, rootSAScene, stage));
+        CAButton.setOnMouseClicked(e -> fadeTransitionToScene(rootRegionPick, CAScene, rootCAScene, stage));
+        EUButton.setOnMouseClicked(e -> fadeTransitionToScene(rootRegionPick, EUScene, rootEUScene, stage));
+        ASButton.setOnMouseClicked(e -> fadeTransitionToScene(rootRegionPick, ASIAScene, rootASIAScene, stage));
+        AFButton.setOnMouseClicked(e -> fadeTransitionToScene(rootRegionPick, AFScene, rootAFScene, stage));
+        OCButton.setOnMouseClicked(e -> fadeTransitionToScene(rootRegionPick, OCScene, rootOCScene, stage));
 
-        EUButton.setOnMouseClicked(e -> {
-            fadeTransitionToScene(rootRegionPick, EUScene, rootEUScene, stage);
-        });
-
-        ASButton.setOnMouseClicked(e -> {
-            fadeTransitionToScene(rootRegionPick, ASIAScene, rootASIAScene, stage);
-        });
-
-        AFButton.setOnMouseClicked(e -> {
-            fadeTransitionToScene(rootRegionPick, AFScene, rootAFScene, stage);
-        });
-
-        OCButton.setOnMouseClicked(e -> {
-            fadeTransitionToScene(rootRegionPick, OCScene, rootOCScene, stage);
-        });
-
+        // Hovering over the region map reveals a pin & the circle radius.
+        enablePinTracking(NAMap, rootNAScene);
+        enablePinTracking(CAMap, rootCAScene);
+        enablePinTracking(SAMap, rootSAScene);
+        enablePinTracking(EUMap, rootEUScene);
+        enablePinTracking(AFMap, rootAFScene);
+        enablePinTracking(ASMap, rootASIAScene);
+        enablePinTracking(OCMap, rootOCScene);
 
         /// Stage
         // Final Touches & Scene shown
@@ -511,6 +451,62 @@ public class HelloApplication extends Application {
 
         stage.show();
     }
+
+
+
+    private void enablePinTracking(Rectangle rect, StackPane root) {
+        // Load the pin image
+        ImageView pin = new ImageView(new Image("pin.png")); // Ensure this path is correct
+        pin.setFitWidth(40); // Adjust size as needed
+        pin.setFitHeight(40);
+        pin.setVisible(false); // Initially hidden
+
+
+        Circle circle = new Circle();
+        circle.setRadius(40);
+        circle.setFill(Color.BLUE);
+        circle.setOpacity(0.5);
+        circle.setStrokeWidth(3);
+        circle.setStroke(Color.BLACK);
+        circle.setVisible(false);
+
+
+        root.getChildren().addAll(pin, circle);
+        // Mouse entered event
+        rect.setOnMouseEntered(event -> {
+            pin.setVisible(true);  // Make pin visible when mouse enters
+            circle.setVisible(true);
+            updatePinAndCirclePosition(event.getX(), event.getY(), pin, circle);
+        });
+
+        // Mouse exited event
+        rect.setOnMouseExited(event -> {
+            pin.setVisible(false);  // Hide pin when mouse exits
+            circle.setVisible(false);
+        });
+
+        // Mouse moved event
+        rect.setOnMouseMoved(event -> {
+            // Ensure the UI update happens on the JavaFX application thread
+            Platform.runLater(() -> updatePinAndCirclePosition(event.getX(), event.getY(), pin, circle));
+        });
+    }
+
+    private void updatePinAndCirclePosition(double mouseX, double mouseY, ImageView pin, Circle circle) {
+        // This method is called from Platform.runLater to ensure thread safety
+
+        // Calculate the new position of the pin relative to the map
+        double newX = mouseX - 400;  // Adjust to center the pin over the mouse
+        double newY = mouseY - 280;  // Adjust to center the pin over the mouse
+
+        // Update the pin's position by setting translateX and translateY to move it
+        pin.setTranslateX(newX);
+        pin.setTranslateY(newY);
+        circle.setTranslateX(newX);
+        circle.setTranslateY(newY+60);
+
+    }
+
 
     /**
      * Helper method to create a StackPane containing a rectangle with a specified stroke color.
