@@ -210,7 +210,7 @@ public class HelloApplication extends Application {
                                                                "With healthy cooperation & participation in the market, shortages would\n fall and the automotive industry would " +
                                                                "skyrocket & boom in market value.", 20);
 
-        mainMenuRectangle = createRectanglePane(Color.BLACK, "THE FIRM STARTUP", 60);
+        mainMenuRectangle = createRectanglePane(Color.BLACK, "YOUR MOMMY", 60);
 
         // Stack of all StackPanes to show them in layers
         StackPane stack = new StackPane(projectInfoBox, creditsInfoBox, worldMapMainMenuImageFrame, mainMenuRectangle);
