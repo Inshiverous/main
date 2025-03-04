@@ -466,6 +466,9 @@ public class HelloApplication extends Application {
 
 
     private void enablePinTracking(Rectangle rect, StackPane root) {
+
+        int count = 0; // count for debugging coordinate location of the mouse.
+
         // Load the pin image
         ImageView pin = new ImageView(new Image("pin.png")); // Ensure this path is correct
         pin.setFitWidth(40); // Adjust size as needed
@@ -487,7 +490,7 @@ public class HelloApplication extends Application {
         rect.setOnMouseEntered(event -> {
             pin.setVisible(true);  // Make pin visible when mouse enters
             circle.setVisible(true);
-            updatePinAndCirclePosition(event.getX(), event.getY(), pin, circle);
+            updatePinAndCirclePosition(event.getX(), event.getY(), pin, circle, count);
         });
 
         // Mouse exited event
@@ -499,11 +502,11 @@ public class HelloApplication extends Application {
         // Mouse moved event
         rect.setOnMouseMoved(event -> {
             // Ensure the UI update happens on the JavaFX application thread
-            Platform.runLater(() -> updatePinAndCirclePosition(event.getX(), event.getY(), pin, circle));
+            Platform.runLater(() -> updatePinAndCirclePosition(event.getX(), event.getY(), pin, circle, count));
         });
     }
 
-    private void updatePinAndCirclePosition(double mouseX, double mouseY, ImageView pin, Circle circle) {
+    private void updatePinAndCirclePosition(double mouseX, double mouseY, ImageView pin, Circle circle, int count) {
         // This method is called from Platform.runLater to ensure thread safety
 
         // Calculate the new position of the pin relative to the map
@@ -515,6 +518,9 @@ public class HelloApplication extends Application {
         pin.setTranslateY(newY);
         circle.setTranslateX(newX);
         circle.setTranslateY(newY+60);
+
+
+
 
     }
 
