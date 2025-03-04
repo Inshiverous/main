@@ -1,9 +1,6 @@
 package org.example.main;
 
-import javafx.animation.FadeTransition;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
+import javafx.animation.*;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -24,13 +21,13 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import org.w3c.dom.css.Rect;
 
 import javax.print.attribute.standard.MediaSize;
 import java.io.IOException;
@@ -108,10 +105,12 @@ public class HelloApplication extends Application {
     private Button OCButton;
 
     /// Labels
-    // Main Menu Scene (scene1)
-//    private Label titleLabel;
+    // Main Menu Scene
 
-    // Region Pick Scene (scene2)
+    // Firm Picking Scene
+    private Label firmPickerGuideLabel;
+
+    // Region Pick Scene
     private Label regionPickGuideLabel;
 
     // Map Scenes
@@ -127,6 +126,9 @@ public class HelloApplication extends Application {
 
     // Back Circle Assets
     private Circle backCircleMM;
+
+    private Circle backCircleFP;
+
     private Circle backCircleNA;
     private Circle backCircleCA;
     private Circle backCircleSA;
@@ -139,6 +141,11 @@ public class HelloApplication extends Application {
 
     private final Color IVORY = Color.rgb(255,255,240);
     private final Color DARK_IVORY = Color.rgb(180,180,169);
+
+    /// ENUMS
+
+    Boolean pinPlaced = false;
+    Boolean pinPlacedAnimationExecuted = false;
 
     /// ///--------------------------------------------------------------------------------------------------------/// ///
     /**
@@ -234,6 +241,7 @@ public class HelloApplication extends Application {
         leftAppElementsLayout.getChildren().addAll(beginPlanningButton, creditsButton, projectInfoButton);
         leftAppElementsLayout.setStyle("-fx-padding: 50; -fx-alignment: center-left; -fx-font-size: 50");
         leftAppElementsLayout.setAlignment(Pos.CENTER_LEFT);
+
         leftAppElementsLayout.setOnMouseExited(e -> mainMenuRectangle.toFront());
 
         // Fade into the default rectangle whenever a button is not being hovered over
@@ -467,7 +475,8 @@ public class HelloApplication extends Application {
 
     private void enablePinTracking(Rectangle rect, StackPane root) {
 
-        int count = 0; // count for debugging coordinate location of the mouse.
+        pinPlaced = false;
+
 
         // Load the pin image
         ImageView pin = new ImageView(new Image("pin.png")); // Ensure this path is correct
@@ -485,28 +494,43 @@ public class HelloApplication extends Application {
         circle.setVisible(false);
 
 
-        root.getChildren().addAll(pin, circle);
+        root.getChildren().addAll(circle, pin);
         // Mouse entered event
         rect.setOnMouseEntered(event -> {
-            pin.setVisible(true);  // Make pin visible when mouse enters
-            circle.setVisible(true);
-            updatePinAndCirclePosition(event.getX(), event.getY(), pin, circle, count);
+            if (!pinPlaced || !pinPlacedAnimationExecuted) {
+                pin.setVisible(true);  // Make pin visible when mouse enters
+                circle.setVisible(true);
+                updatePinAndCirclePosition(event.getX(), event.getY(), pin, circle, pinPlaced);
+            }
         });
 
         // Mouse exited event
         rect.setOnMouseExited(event -> {
-            pin.setVisible(false);  // Hide pin when mouse exits
-            circle.setVisible(false);
+            if (!pinPlaced || !pinPlacedAnimationExecuted) {
+                pin.setVisible(false);  // Hide pin when mouse exits
+                circle.setVisible(false);
+            }
         });
 
         // Mouse moved event
         rect.setOnMouseMoved(event -> {
-            // Ensure the UI update happens on the JavaFX application thread
-            Platform.runLater(() -> updatePinAndCirclePosition(event.getX(), event.getY(), pin, circle, count));
+            if (!pinPlaced || !pinPlacedAnimationExecuted) {
+                // Ensure the UI update happens on the JavaFX application thread
+                Platform.runLater(() -> updatePinAndCirclePosition(event.getX(), event.getY(), pin, circle, pinPlaced));
+            }
+        });
+
+        rect.setOnMouseClicked(event -> {
+            pinPlaced = true;
+            placePinAnimation(pin, circle);
+            if (root.getChildren().size() == 5) {
+                root.getChildren().remove(1);
+            }
+
         });
     }
 
-    private void updatePinAndCirclePosition(double mouseX, double mouseY, ImageView pin, Circle circle, int count) {
+    private void updatePinAndCirclePosition(double mouseX, double mouseY, ImageView pin, Circle circle, boolean pinPlaced) {
         // This method is called from Platform.runLater to ensure thread safety
 
         // Calculate the new position of the pin relative to the map
@@ -514,13 +538,13 @@ public class HelloApplication extends Application {
         double newY = mouseY - 280;  // Adjust to center the pin over the mouse
 
         // Update the pin's position by setting translateX and translateY to move it
-        pin.setTranslateX(newX);
-        pin.setTranslateY(newY);
-        circle.setTranslateX(newX);
-        circle.setTranslateY(newY+60);
 
-
-
+        if (!pinPlaced) { // if the pin is not placed, move the pin with the mouse.
+            pin.setTranslateX(newX);
+            pin.setTranslateY(newY);
+            circle.setTranslateX(newX);
+            circle.setTranslateY(newY+60);
+        }
 
     }
 
@@ -817,8 +841,38 @@ public class HelloApplication extends Application {
         return button;
     }
 
+    private void placePinAnimation(ImageView pin, Circle circle) {
+
+        if (!pinPlacedAnimationExecuted) {
+
+
+            // Get circle center coordinates
+            double circleX = circle.getTranslateX();
+            double circleY = circle.getTranslateY();
+
+            System.out.println("Circle center coords: " + circleX + ", " + circleY);
+            System.out.println("Initial pin coords: " + pin.getTranslateX() + ", " + pin.getTranslateY());
+
+
+            // Move pin to the center of the circle; Quadratic speed
+            Path path = new Path();
+            path.getElements().add(new MoveTo(pin.getTranslateX()+20, pin.getTranslateY()));
+            path.getElements().add(new QuadCurveTo(pin.getTranslateX()+20, pin.getTranslateY() - 80, circleX+20, circleY));
+
+            PathTransition moveToCircle = new PathTransition(Duration.seconds(1), path, pin);
+
+
+            moveToCircle.play();
+
+            pinPlacedAnimationExecuted = true;
+        }
+
+    }
+
+
 
     public static void main(String[] args) {
         launch();
     }
 }
+
