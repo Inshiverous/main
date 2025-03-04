@@ -34,6 +34,7 @@ import javafx.util.Duration;
 
 import javax.print.attribute.standard.MediaSize;
 import java.io.IOException;
+import java.security.Key;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Stack;
@@ -134,6 +135,11 @@ public class HelloApplication extends Application {
     private Circle backCircleAS;
     private Circle backCircleOC;
 
+    /// Styles
+
+    private final Color IVORY = Color.rgb(255,255,240);
+    private final Color DARK_IVORY = Color.rgb(180,180,169);
+
     /// ///--------------------------------------------------------------------------------------------------------/// ///
     /**
      * The entry point for the application.
@@ -141,6 +147,7 @@ public class HelloApplication extends Application {
      */
     @Override
     public void start(Stage stage) throws IOException {
+
 
         // Assigns image variables their images to be loaded.
         worldMapImage = getImage("WMBlank.png");
@@ -420,6 +427,7 @@ public class HelloApplication extends Application {
                 fadeTransitionToScene(stage.getScene().getRoot(), regionPickScene, rootRegionPick, stage);
             });
 
+
         beginPlanningButton.setOnMouseClicked(e -> fadeTransitionToScene(rootMainMenu, regionPickScene, rootRegionPick, stage));
         backButtonToMainMenu.setOnMouseClicked(e -> fadeTransitionToScene(rootRegionPick, mainMenuScene, rootMainMenu, stage));
 
@@ -430,6 +438,8 @@ public class HelloApplication extends Application {
         ASButton.setOnMouseClicked(e -> fadeTransitionToScene(rootRegionPick, ASIAScene, rootASIAScene, stage));
         AFButton.setOnMouseClicked(e -> fadeTransitionToScene(rootRegionPick, AFScene, rootAFScene, stage));
         OCButton.setOnMouseClicked(e -> fadeTransitionToScene(rootRegionPick, OCScene, rootOCScene, stage));
+
+
 
         // Hovering over the region map reveals a pin & the circle radius.
         enablePinTracking(NAMap, rootNAScene);
@@ -451,6 +461,7 @@ public class HelloApplication extends Application {
 
         stage.show();
     }
+
 
 
 
@@ -589,7 +600,7 @@ public class HelloApplication extends Application {
      */
     private Button createButton(String text, StackPane targetRect, StackPane priorityRect) {
         Button button = new Button(text);
-        button.setStyle("-fx-background-color: ivory; " +
+        button.setStyle("-fx-background-color: rgb(255, 255, 240); " +
                 "-fx-background-radius: 14; " +
                 "-fx-border-color: black;" +
                 "-fx-border-width: 10; " +
@@ -602,9 +613,12 @@ public class HelloApplication extends Application {
             fadeEffect(targetRect);
         });
 
+
+
         button.setAlignment(Pos.CENTER); // Attempt to center buttons
         return button;
     }
+
 
     /**
      * Applies a fade effect to the target StackPane, transitioning it smoothly between the active and target rectangles.
