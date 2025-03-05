@@ -3,16 +3,12 @@ package org.example.main;
 import javafx.animation.*;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
-import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -27,21 +23,15 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import org.w3c.dom.css.Rect;
 
-import javax.print.attribute.standard.MediaSize;
 import java.io.IOException;
-import java.security.Key;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Stack;
 
 /**
  * Main application class for the Firm Locator project.
  * This app features a main menu with a world map and different info sections.
  * It includes a fade effect to smoothly transition between elements when interacting with buttons.
  */
-public class HelloApplication extends Application {
+public class Main extends Application {
 
     /// --- Images
 
@@ -74,7 +64,7 @@ public class HelloApplication extends Application {
     private Rectangle AFMap;
     private Rectangle OCMap;
 
-    private StackPane activeRect; // Tracks which rectangle in the main menu is currently being displayed.
+    public static StackPane activeRect; // Tracks which rectangle in the main menu is currently being displayed.
 
     /// Buttons
     private Button beginPlanningButton;
@@ -163,6 +153,48 @@ public class HelloApplication extends Application {
     Scene intoScene;
     StackPane intoRoot;
 
+
+
+    /// ACCESSOR METHODS
+
+    public Boolean getPinPlaced() {
+        return pinPlaced;
+    }
+
+    public Boolean getPinPlacedAnimationExecuted() {
+        return pinPlacedAnimationExecuted;
+    }
+
+    public Scene getIntoScene() {
+        return intoScene;
+    }
+
+    public StackPane getIntoRoot() {
+        return intoRoot;
+    }
+
+
+    /// MUTATOR METHODS
+
+    public void setPinPlaced(Boolean bool) {
+        pinPlaced = bool;
+    }
+
+    public void setPinPlacedAnimationExecuted(Boolean bool) {
+        pinPlacedAnimationExecuted = bool;
+    }
+
+    public void setIntoScene(Scene scene) {
+        intoScene = scene;
+    }
+    public void setPinPlaced(StackPane root) {
+        intoRoot = root;
+    }
+
+    public static void setActiveRect(StackPane active) {
+        activeRect = active;
+    }
+
     /// ///--------------------------------------------------------------------------------------------------------/// ///
     /**
      * The entry point for the application.
@@ -217,15 +249,15 @@ public class HelloApplication extends Application {
             ////---- App Layout
 
             // Main Menu
-            worldMapMainMenuImageFrame = createRectanglePane(Color.BLACK, worldMapImage);
-            creditsInfoBox = createRectanglePane(Color.BLACK, "This project was made by\nThe Holy Trinity of Coding\n" +
+            worldMapMainMenuImageFrame = Helpers.createRectanglePane(Color.BLACK, worldMapImage);
+            creditsInfoBox = Helpers.createRectanglePane(Color.BLACK, "This project was made by\nThe Holy Trinity of Coding\n" +
                                                                    "a team consisting of Levi Daniel, Aeden Kramer, and Jon Cheever." +
                                                                    "\n\nOur project is inspired by the\nhighlighted problem reported by\n" +
                                                                    "JustAuto (just-auto.com)\n\n"+
 
                                                                    "We got our firm locations from resource maps\nposted by semiconductors.org and hcss.nl", 20);
 
-            projectInfoBox = createRectanglePane(Color.BLACK, "This project addresses the widespread, present problem of \n" +
+            projectInfoBox = Helpers.createRectanglePane(Color.BLACK, "This project addresses the widespread, present problem of \n" +
                                                                    "resource shortages in automotive industry, ranging from raw materials, \n" +
                                                                    "to semiconductors to the manufacturers of car parts.\n\n"+
                                                                    "This project exists to encourage participation of new firms by displaying \n" +
@@ -233,7 +265,7 @@ public class HelloApplication extends Application {
                                                                    "With healthy cooperation & participation in the market, shortages would\n fall and the automotive industry would " +
                                                                    "skyrocket & boom in market value.", 20);
 
-            mainMenuRectangle = createRectanglePane(Color.BLACK, "THE FIRM STARTUP", 60);
+            mainMenuRectangle = Helpers.createRectanglePane(Color.BLACK, "THE FIRM STARTUP", 60);
 
             // Stack of all StackPanes to show them in layers
             StackPane stack = new StackPane(projectInfoBox, creditsInfoBox, worldMapMainMenuImageFrame, mainMenuRectangle);
@@ -242,15 +274,15 @@ public class HelloApplication extends Application {
 
             // Set opacities to have mainMenuRectangle be the default.
             activeRect = mainMenuRectangle; // Initialize the active rectangle
-            setContentOpacity(worldMapMainMenuImageFrame, 0);
-            setContentOpacity(creditsInfoBox, 0);
-            setContentOpacity(projectInfoBox, 0);
-            setContentOpacity(mainMenuRectangle, 1);
+            Helpers.setContentOpacity(worldMapMainMenuImageFrame, 0);
+            Helpers.setContentOpacity(creditsInfoBox, 0);
+            Helpers.setContentOpacity(projectInfoBox, 0);
+            Helpers.setContentOpacity(mainMenuRectangle, 1);
 
             // Initialize Main Menu Butons
-            beginPlanningButton = createButton("Begin Planning", worldMapMainMenuImageFrame, stack);
-            creditsButton = createButton("Credits/Sources", creditsInfoBox, stack);
-            projectInfoButton = createButton("Project Info.", projectInfoBox, stack);
+            beginPlanningButton = Helpers.createButton("Begin Planning", worldMapMainMenuImageFrame, stack, activeRect);
+            creditsButton = Helpers.createButton("Credits/Sources", creditsInfoBox, stack, activeRect);
+            projectInfoButton = Helpers.createButton("Project Info.", projectInfoBox, stack, activeRect);
 
             // Button Layout
             VBox leftAppElementsLayout = new VBox(90);
@@ -261,7 +293,7 @@ public class HelloApplication extends Application {
             leftAppElementsLayout.setOnMouseExited(e -> mainMenuRectangle.toFront());
 
             // Fade into the default rectangle whenever a button is not being hovered over
-            leftAppElementsLayout.setOnMouseExited(e -> fadeEffect(mainMenuRectangle));
+            leftAppElementsLayout.setOnMouseExited(e -> Helpers.fadeEffect(mainMenuRectangle, activeRect));
 
             /// Main Menu Scene initialization
 
@@ -273,19 +305,19 @@ public class HelloApplication extends Application {
             /// Back Buttons
 
             // Back Button In Region Select Scene
-            backButtonToMainMenu = createBackButtonLayout(backCircleMM);
+            backButtonToMainMenu = Helpers.createBackButtonLayout(backCircleMM, backImage);
 
             // Back Button In Map Scenes
 
-            backButtonToWorldMap = createBackButtonLayout(backCircle);
+            backButtonToWorldMap = Helpers.createBackButtonLayout(backCircle, backImage);
 
-            backButtonToPrevRegionSR = createBackButtonLayout(backCircleSR);
+            backButtonToPrevRegionSR = Helpers.createBackButtonLayout(backCircleSR, backImage);
 
-            forwardButtonToScoreResults = createBackButtonLayout(forwardCircleSR);
+            forwardButtonToScoreResults = Helpers.createBackButtonLayout(forwardCircleSR, backImage);
             forwardButtonToScoreResults.setScaleX(-1); // Flip image horizontally
 
             /// Region Pick Scene
-            regionPickGuideLabel = createHeaderLabel("Where do you want your firm?");
+            regionPickGuideLabel = Helpers.createHeaderLabel("Where do you want your firm?");
 
             VBox regionPickLayout = new VBox(10, worldMapRegionPickFrame);
             regionPickLayout.setStyle("-fx-padding: 20; -fx-alignment: center; -fx-font-size: 16;");
@@ -296,13 +328,13 @@ public class HelloApplication extends Application {
             StackPane.setAlignment(backButtonToMainMenu,Pos.TOP_LEFT);
 
             // Region Scene Buttons
-            NAButton = createButtonAt(rootRegionPick, "NA", 250, 300, Color.BLUE);
-            CAButton = createButtonAt(rootRegionPick, "CA", 250, 400, Color.PURPLE);
-            SAButton = createButtonAt(rootRegionPick, "SA", 350, 525, Color.RED);
-            EUButton = createButtonAt(rootRegionPick, "EU", 575, 300, Color.GREEN);
-            AFButton = createButtonAt(rootRegionPick, "AF", 565, 410, Color.ORANGE);
-            ASButton = createButtonAt(rootRegionPick, "AS", 800, 325, Color.BROWN);
-            OCButton = createButtonAt(rootRegionPick, "OC", 925, 560, Color.DARKCYAN);
+            NAButton = Helpers.createButtonAt(rootRegionPick, "NA", 250, 300, Color.BLUE);
+            CAButton = Helpers.createButtonAt(rootRegionPick, "CA", 250, 400, Color.PURPLE);
+            SAButton = Helpers.createButtonAt(rootRegionPick, "SA", 350, 525, Color.RED);
+            EUButton = Helpers.createButtonAt(rootRegionPick, "EU", 575, 300, Color.GREEN);
+            AFButton = Helpers.createButtonAt(rootRegionPick, "AF", 565, 410, Color.ORANGE);
+            ASButton = Helpers.createButtonAt(rootRegionPick, "AS", 800, 325, Color.BROWN);
+            OCButton = Helpers.createButtonAt(rootRegionPick, "OC", 925, 560, Color.DARKCYAN);
 
             StackPane.setAlignment(regionPickGuideLabel, Pos.TOP_CENTER);
             StackPane.setMargin(regionPickGuideLabel, new Insets(50, 0, 0, 0));
@@ -316,7 +348,7 @@ public class HelloApplication extends Application {
 
             // North America Scene
 
-            NAGuideLabel = createHeaderLabel(regionScenesHeaderLabel);
+            NAGuideLabel = Helpers.createHeaderLabel(regionScenesHeaderLabel);
 
             VBox NALayout = new VBox(10, NAMap);
             NALayout.setStyle("-fx-padding: 20; -fx-alignment: center; -fx-font-size: 16;");
@@ -333,7 +365,7 @@ public class HelloApplication extends Application {
 
 
             // Central America Scene
-            CAGuideLabel = createHeaderLabel(regionScenesHeaderLabel);
+            CAGuideLabel = Helpers.createHeaderLabel(regionScenesHeaderLabel);
 
             VBox CALayout = new VBox(10, CAMap);
             CALayout.setStyle("-fx-padding: 20; -fx-alignment: center; -fx-font-size: 16;");
@@ -350,7 +382,7 @@ public class HelloApplication extends Application {
 
 
             // South America Scene
-            SAGuideLabel = createHeaderLabel(regionScenesHeaderLabel);
+            SAGuideLabel = Helpers.createHeaderLabel(regionScenesHeaderLabel);
 
             VBox SALayout = new VBox(10, SAMap);
             SALayout.setStyle("-fx-padding: 20; -fx-alignment: center; -fx-font-size: 16;");
@@ -367,7 +399,7 @@ public class HelloApplication extends Application {
 
             // Europe Scene
 
-            EUGuideLabel = createHeaderLabel(regionScenesHeaderLabel);
+            EUGuideLabel = Helpers.createHeaderLabel(regionScenesHeaderLabel);
 
             VBox EULayout = new VBox(10, EUMap);
             EULayout.setStyle("-fx-padding: 20; -fx-alignment: center; -fx-font-size: 16;");
@@ -384,7 +416,7 @@ public class HelloApplication extends Application {
 
             // Africa Scene
 
-            AFGuideLabel = createHeaderLabel(regionScenesHeaderLabel);
+            AFGuideLabel = Helpers.createHeaderLabel(regionScenesHeaderLabel);
 
             VBox AFLayout = new VBox(10, AFMap);
             AFLayout.setStyle("-fx-padding: 20; -fx-alignment: center; -fx-font-size: 16;");
@@ -401,7 +433,7 @@ public class HelloApplication extends Application {
 
             // Asia Scene
 
-            ASGuideLabel = createHeaderLabel(regionScenesHeaderLabel);
+            ASGuideLabel = Helpers.createHeaderLabel(regionScenesHeaderLabel);
 
             VBox ASLayout = new VBox(10, ASMap);
             ASLayout.setStyle("-fx-padding: 20; -fx-alignment: center; -fx-font-size: 16;");
@@ -418,7 +450,7 @@ public class HelloApplication extends Application {
 
             // Oceania Scene
 
-            OCGuideLabel = createHeaderLabel(regionScenesHeaderLabel);
+            OCGuideLabel = Helpers.createHeaderLabel(regionScenesHeaderLabel);
 
             VBox OCLayout = new VBox(10, OCMap);
             OCLayout.setStyle("-fx-padding: 20; -fx-alignment: center; -fx-font-size: 16;");
@@ -435,7 +467,7 @@ public class HelloApplication extends Application {
 
 
             // Score Results
-            SRGuideLabel = createHeaderLabel("Score Results:");
+            SRGuideLabel = Helpers.createHeaderLabel("Score Results:");
 
             VBox SRLayout = new VBox(10);
             SRLayout.setAlignment(Pos.CENTER);
@@ -459,26 +491,26 @@ public class HelloApplication extends Application {
             backButtonToWorldMap.setOnMouseClicked(e -> {
                 intoScene = null;
                 intoRoot = null;
-                fadeTransitionToScene(stage.getScene().getRoot(), regionPickScene, rootRegionPick, stage);
+                Helpers.fadeTransitionToScene(stage.getScene().getRoot(), regionPickScene, rootRegionPick, stage);
                 System.out.println(intoScene);
                 System.out.println(intoRoot);
 
             });
 
 
-            beginPlanningButton.setOnMouseClicked(e -> fadeTransitionToScene(rootMainMenu, regionPickScene, rootRegionPick, stage));
-            backButtonToMainMenu.setOnMouseClicked(e -> fadeTransitionToScene(rootRegionPick, mainMenuScene, rootMainMenu, stage));
+            beginPlanningButton.setOnMouseClicked(e -> Helpers.fadeTransitionToScene(rootMainMenu, regionPickScene, rootRegionPick, stage));
+            backButtonToMainMenu.setOnMouseClicked(e -> Helpers.fadeTransitionToScene(rootRegionPick, mainMenuScene, rootMainMenu, stage));
 
-            NAButton.setOnMouseClicked(e ->{fadeTransitionToScene(rootRegionPick, NAScene, rootNAScene, stage); intoScene = NAScene; intoRoot = rootNAScene; addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot); addBackButtonAsChild(backButtonToWorldMap, intoRoot);});
-            SAButton.setOnMouseClicked(e -> {fadeTransitionToScene(rootRegionPick, SAScene, rootSAScene, stage); intoScene = SAScene; intoRoot = rootSAScene; addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot); addBackButtonAsChild(backButtonToWorldMap, intoRoot);});
-            CAButton.setOnMouseClicked(e -> {fadeTransitionToScene(rootRegionPick, CAScene, rootCAScene, stage); intoScene = CAScene; intoRoot = rootCAScene; addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot); addBackButtonAsChild(backButtonToWorldMap, intoRoot);});
-            EUButton.setOnMouseClicked(e -> {fadeTransitionToScene(rootRegionPick, EUScene, rootEUScene, stage); intoScene = EUScene; intoRoot = rootEUScene; addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot); addBackButtonAsChild(backButtonToWorldMap, intoRoot);});
-            ASButton.setOnMouseClicked(e -> {fadeTransitionToScene(rootRegionPick, ASIAScene, rootASIAScene, stage); intoScene = ASIAScene; intoRoot = rootASIAScene; addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot); addBackButtonAsChild(backButtonToWorldMap, intoRoot);});
-            AFButton.setOnMouseClicked(e -> {fadeTransitionToScene(rootRegionPick, AFScene, rootAFScene, stage); intoScene = AFScene; intoRoot = rootAFScene; addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot); addBackButtonAsChild(backButtonToWorldMap, intoRoot);});
-            OCButton.setOnMouseClicked(e -> {fadeTransitionToScene(rootRegionPick, OCScene, rootOCScene, stage); intoScene = OCScene; intoRoot = rootOCScene; addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot); addBackButtonAsChild(backButtonToWorldMap, intoRoot);});
+            NAButton.setOnMouseClicked(e ->{Helpers.fadeTransitionToScene(rootRegionPick, NAScene, rootNAScene, stage); intoScene = NAScene; intoRoot = rootNAScene; Helpers.addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot); Helpers.addBackButtonAsChild(backButtonToWorldMap, intoRoot);});
+            SAButton.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(rootRegionPick, SAScene, rootSAScene, stage); intoScene = SAScene; intoRoot = rootSAScene; Helpers.addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot); Helpers.addBackButtonAsChild(backButtonToWorldMap, intoRoot);});
+            CAButton.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(rootRegionPick, CAScene, rootCAScene, stage); intoScene = CAScene; intoRoot = rootCAScene; Helpers.addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot); Helpers.addBackButtonAsChild(backButtonToWorldMap, intoRoot);});
+            EUButton.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(rootRegionPick, EUScene, rootEUScene, stage); intoScene = EUScene; intoRoot = rootEUScene; Helpers.addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot); Helpers.addBackButtonAsChild(backButtonToWorldMap, intoRoot);});
+            ASButton.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(rootRegionPick, ASIAScene, rootASIAScene, stage); intoScene = ASIAScene; intoRoot = rootASIAScene; Helpers.addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot); Helpers.addBackButtonAsChild(backButtonToWorldMap, intoRoot);});
+            AFButton.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(rootRegionPick, AFScene, rootAFScene, stage); intoScene = AFScene; intoRoot = rootAFScene; Helpers.addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot); Helpers.addBackButtonAsChild(backButtonToWorldMap, intoRoot);});
+            OCButton.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(rootRegionPick, OCScene, rootOCScene, stage); intoScene = OCScene; intoRoot = rootOCScene; Helpers.addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot); Helpers.addBackButtonAsChild(backButtonToWorldMap, intoRoot);});
 
-            forwardButtonToScoreResults.setOnMouseClicked(e -> {fadeTransitionToScene(intoRoot, SRScene, rootSRScene, stage);});
-            backButtonToPrevRegionSR.setOnMouseClicked(e -> {fadeTransitionToScene(rootSRScene, intoScene, intoRoot, stage);});
+            forwardButtonToScoreResults.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(intoRoot, SRScene, rootSRScene, stage);});
+            backButtonToPrevRegionSR.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(rootSRScene, intoScene, intoRoot, stage);});
 
 
             // Hovering over the region map reveals a pin & the circle radius.
@@ -581,303 +613,6 @@ public class HelloApplication extends Application {
     }
 
 
-    /**
-     * Helper method to create a StackPane containing a rectangle with a specified stroke color.
-     * @param strokeColor The color of the rectangle's border.
-     * @return A StackPane containing the rectangle.
-     */
-    private StackPane createRectanglePane(Color strokeColor) {
-        Rectangle rect = new Rectangle(600, 750, Color.IVORY);
-        rect.setArcWidth(28);
-        rect.setArcHeight(20);
-        rect.setStrokeWidth(10);
-        rect.setOpacity(1);
-        rect.setStroke(strokeColor);
-
-        StackPane container = new StackPane(rect);
-        container.setAlignment(Pos.CENTER_RIGHT);
-
-        return container;
-    }
-
-    /**
-     * Helper method to create a StackPane containing a rectangle with a specified stroke color and an image.
-     * @param strokeColor The color of the rectangle's border.
-     * @param image The image to be displayed inside the rectangle.
-     * @return A StackPane containing the rectangle and the image.
-     */
-    private StackPane createRectanglePane(Color strokeColor, Image image) {
-        Rectangle rect = new Rectangle(600, 750, Color.IVORY);
-        rect.setArcWidth(28);
-        rect.setArcHeight(20);
-        rect.setStrokeWidth(10);
-        rect.setOpacity(1);
-        rect.setStroke(strokeColor);
-
-        ImageView imageView = new ImageView(image);
-        imageView.setFitWidth(590);
-        imageView.setFitHeight(300);
-        imageView.setPreserveRatio(true);
-
-        StackPane container = new StackPane(rect, imageView);
-        container.setAlignment(Pos.CENTER);
-
-        return container;
-    }
-
-    /**
-     * Helper method to create a StackPane containing a rectangle with a specified stroke color and a text label.
-     * @param strokeColor The color of the rectangle's border.
-     * @param text The text to be displayed inside the rectangle.
-     * @param fontSize The font size for the text.
-     * @return A StackPane containing the rectangle and the text label.
-     */
-    private StackPane createRectanglePane(Color strokeColor, String text, int fontSize) {
-        StackPane container = createRectanglePane(strokeColor);
-
-        Label label = new Label(text);
-        label.setFont(Font.font("Arial", FontWeight.BOLD, fontSize));
-        label.setTextFill(Color.BLACK);
-        label.setTextAlignment(TextAlignment.CENTER);
-        label.setWrapText(true);
-        label.setMaxWidth(580);
-        label.setStyle("-fx-background-color: rgba(255,255,255,0); -fx-border-radius: 5;");
-
-        StackPane textContainer = new StackPane(label);
-        textContainer.setAlignment(Pos.CENTER);
-        textContainer.setMaxWidth(600);
-        textContainer.setMaxHeight(600);
-
-        container.getChildren().add(textContainer);
-
-        return container;
-    }
-
-    /**
-     * Creates a button with a specified label and links it to a target rectangle for fade effect.
-     * @param text The text to be displayed on the button.
-     * @param targetRect The StackPane that will be shown when the button is hovered.
-     * @param priorityRect The StackPane that will be prioritized when hovered over.
-     * @return The created button.
-     */
-    private Button createButton(String text, StackPane targetRect, StackPane priorityRect) {
-        Button button = new Button(text);
-        button.setStyle("-fx-background-color: rgb(255, 255, 240); " +
-                "-fx-background-radius: 14; " +
-                "-fx-border-color: black;" +
-                "-fx-border-width: 10; " +
-                "-fx-padding: 10px 20px;" +
-                "-fx-font-size: 50px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-border-radius: 5;");
-
-        button.setOnMouseEntered(e -> { // Display a different element when the button is hovered over.
-            fadeEffect(targetRect);
-        });
-
-
-
-        button.setAlignment(Pos.CENTER); // Attempt to center buttons
-        return button;
-    }
-
-
-    /**
-     * Applies a fade effect to the target StackPane, transitioning it smoothly between the active and target rectangles.
-     * @param target The StackPane to which the fade effect will be applied.
-     */
-    private void fadeEffect(StackPane target) {
-        if (target == activeRect) return; // Avoid redundant animations
-
-        // Get references to active and target elements
-        ImageView activeImage = getImageView(activeRect);
-        Label activeText = getLabel(activeRect);
-        ImageView targetImage = getImageView(target);
-        Label targetText = getLabel(target);
-
-        // Ensure target elements start at opacity 0 (before fading in)
-        if (targetImage != null) targetImage.setOpacity(0);
-        if (targetText != null) targetText.setOpacity(0);
-
-        // Fade-out animation for current active elements
-        Timeline fadeOut = new Timeline();
-        if (activeImage != null) {
-            fadeOut.getKeyFrames().add(new KeyFrame(Duration.millis(150), new KeyValue(activeImage.opacityProperty(), 0)));
-        }
-        if (activeText != null) {
-            fadeOut.getKeyFrames().add(new KeyFrame(Duration.millis(150), new KeyValue(activeText.opacityProperty(), 0)));
-        }
-
-        // Fade-in animation for target elements
-        Timeline fadeIn = new Timeline();
-        if (targetImage != null) {
-            fadeIn.getKeyFrames().add(new KeyFrame(Duration.millis(250), new KeyValue(targetImage.opacityProperty(), 1.0)));
-        }
-        if (targetText != null) {
-            fadeIn.getKeyFrames().add(new KeyFrame(Duration.millis(250), new KeyValue(targetText.opacityProperty(), 1.0)));
-        }
-
-        // Ensure smooth transition: fade-in starts AFTER fade-out completes
-        fadeOut.setOnFinished(e -> {
-            // Bring target rectangle to front (so it’s visible)
-            target.toFront();
-
-            // Set the target elements to full opacity before fading in (prevents issues)
-            if (targetImage != null) targetImage.setOpacity(0);
-            if (targetText != null) targetText.setOpacity(0);
-
-            // Update the active rectangle reference
-            activeRect = target;
-
-            // Start fade-in animation
-            fadeIn.play();
-        });
-
-        fadeOut.play();
-    }
-
-    /**
-     * Helper method to set the opacity of the content inside a StackPane.
-     * @param rect The StackPane whose contents' opacity will be set.
-     * @param opacity The opacity level to set.
-     */
-    private void setContentOpacity(StackPane rect, double opacity) {
-        if (rect.getChildren().size() > 1 && rect.getChildren().get(1) instanceof ImageView) {
-            ((ImageView) rect.getChildren().get(1)).setOpacity(opacity);
-        }
-        if (rect.getChildren().size() > 2 && rect.getChildren().get(2) instanceof StackPane) {
-            Label text = (Label) ((StackPane) rect.getChildren().get(2)).getChildren().get(0);
-            text.setOpacity(opacity);
-        }
-    }
-
-    /**
-     * Helper method to retrieve an ImageView from a StackPane.
-     * @param rect The StackPane to search for an ImageView.
-     * @return The ImageView found inside the StackPane, or null if not found.
-     */
-    private ImageView getImageView(StackPane rect) {
-        for (Node node : rect.getChildren()) {
-            if (node instanceof ImageView) {
-                return (ImageView) node;
-            }
-        }
-        return null; // No image found
-    }
-
-    /**
-     * Helper method to retrieve a Label from a StackPane.
-     * @param rect The StackPane to search for a Label.
-     * @return The Label found inside the StackPane, or null if not found.
-     */
-    private Label getLabel(StackPane rect) {
-        for (Node node : rect.getChildren()) {
-            if (node instanceof StackPane) {
-                for (Node innerNode : ((StackPane) node).getChildren()) {
-                    if (innerNode instanceof Label) {
-                        return (Label) innerNode;
-                    }
-                }
-            }
-        }
-        return null; // No label found
-    }
-
-    public static Button createButtonAt(StackPane pane, String text, double x, double y, Color textColor) {
-        Button button = new Button(text);
-        button.setTranslateX(x);
-        button.setTranslateY(y);
-        button.setTextFill(textColor);
-        setStyleTheme(button);
-        pane.getChildren().add(button);
-        StackPane.setAlignment(button, Pos.TOP_LEFT);
-
-        return button;
-    }
-
-    private static void setStyleTheme(Button button) {
-        button.setStyle("-fx-background-color: ivory; " +
-                "-fx-background-radius: 14; " +
-                "-fx-border-color: black;" +
-                "-fx-border-width: 5; " +
-                "-fx-font-size: 10px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-border-radius: 5;");
-    }
-
-
-    /**
-     * Helper method to create an image object from a file.
-     * @param fileName The target file name for the image to use.
-     * @return The image that was created from the file name.
-     */    private Image getImage(String fileName) {
-        Image image = null;
-        try { // Image that displays a map of the Earth.
-            image = new Image(getClass().getResource("/"+fileName).toExternalForm());
-        } catch (Exception e) {
-            System.out.println("Error loading" + fileName + "image: " + e.getMessage());
-        }
-        return image;
-    }
-
-    /**
-     * Performs a fade transition when switching between scenes.
-     * This method fades out the current scene, switches to the new scene, and then fades it in.
-     *
-     * @param currentRoot The root node of the current scene that will fade out.
-     * @param newScene The new scene to switch to after the fade-out.
-     * @param newRoot The root node of the new scene that will fade in.
-     * @param stage The primary stage where the scene transition occurs.
-     */
-    private void fadeTransitionToScene(Parent currentRoot, Scene newScene, Parent newRoot, Stage stage) {
-        // Fade out effect for the current scene
-        FadeTransition fadeOut = new FadeTransition(Duration.millis(500), currentRoot);
-        fadeOut.setFromValue(1.0);
-        fadeOut.setToValue(0.0);
-
-        fadeOut.setOnFinished(event -> {
-            // Switch scene after fade-out
-            stage.setScene(newScene);
-
-            // Fade-in effect for the new scene
-            FadeTransition fadeIn = new FadeTransition(Duration.millis(500), newRoot);
-            fadeIn.setFromValue(0.0);
-            fadeIn.setToValue(1.0);
-            fadeIn.play();
-        });
-
-        fadeOut.play();
-    }
-
-
-    private Label createHeaderLabel(String text) {
-        Label label = new Label(text);
-        label.setStyle("-fx-background-color: ivory; " +
-                "-fx-background-radius: 14; " +
-                "-fx-border-color: black;" +
-                "-fx-border-width: 5; " +
-                "-fx-font-size: 50px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-border-radius: 5;");
-
-        return label;
-    }
-
-    private Button createBackButtonLayout(Circle circleAsset) {
-        circleAsset = new Circle(20);
-        circleAsset.setFill(new ImagePattern(backImage));
-        Button button = new Button();
-        button.setGraphic(circleAsset); // Sets the image of the back button in scene 2 to the back button image.
-        button.setStyle("-fx-background-color:transparent; -fx-border-color: transparent; -fx-padding: 67px 150");
-//        button.setMinSize(30, 30);
-//        button.setMaxSize(30, 30);
-        button.setAlignment(Pos.TOP_LEFT);
-
-
-
-        return button;
-    }
-
     private void placePinAnimation(ImageView pin, Circle circle) {
 
         if (!pinPlacedAnimationExecuted) {
@@ -906,21 +641,19 @@ public class HelloApplication extends Application {
 
     }
 
-
-
-    // Forward Button Addition into the next scene to remove redundant code.
-    private void addForwardButtonAsChild(Button button, StackPane intoRoot) {
-        if (!intoRoot.getChildren().contains(button)) {
-            intoRoot.getChildren().add(button);
-            StackPane.setAlignment(button, Pos.CENTER_RIGHT);
+    /**
+     * Helper method to create an image object from a file.
+     * @param fileName The target file name for the image to use.
+     * @return The image that was created from the file name.
+     */
+    public Image getImage(String fileName) {
+        Image image = null;
+        try { // Image that displays a map of the Earth.
+            image = new Image(getClass().getResource("/"+fileName).toExternalForm());
+        } catch (Exception e) {
+            System.out.println("Error loading" + fileName + "image: " + e.getMessage());
         }
-    }
-
-    private void addBackButtonAsChild(Button button, StackPane intoRoot) {
-        if (!intoRoot.getChildren().contains(button)) {
-            intoRoot.getChildren().add(button);
-            StackPane.setAlignment(button, Pos.TOP_LEFT);
-        }
+        return image;
     }
 
 
