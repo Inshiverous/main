@@ -2,6 +2,7 @@ package org.example.main;
 
 import javafx.animation.*;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -116,7 +117,25 @@ public class Helpers {
             fadeEffect(targetRect, activeRect);
         });
 
+        button.setAlignment(Pos.CENTER); // Attempt to center buttons
+        return button;
+    }
 
+    /**
+     * Helper method to create a button in its most basic form + text in this theme.
+     * @param text
+     * @return button; the finished button that was made in the styleset.
+     */
+    public static Button createButton(String text) {
+        Button button = new Button(text);
+        button.setStyle("-fx-background-color: rgb(255, 255, 240); " +
+                "-fx-background-radius: 14; " +
+                "-fx-border-color: black;" +
+                "-fx-border-width: 10; " +
+                "-fx-padding: 10px 20px;" +
+                "-fx-font-size: 50px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-border-radius: 5;");
 
         button.setAlignment(Pos.CENTER); // Attempt to center buttons
         return button;
@@ -246,9 +265,6 @@ public class Helpers {
                 "-fx-border-radius: 5;");
     }
 
-
-
-
     /**
      * Performs a fade transition when switching between scenes.
      * This method fades out the current scene, switches to the new scene, and then fades it in.
@@ -278,7 +294,6 @@ public class Helpers {
         fadeOut.play();
     }
 
-
     public static Label createHeaderLabel(String text) {
         Label label = new Label(text);
         label.setStyle("-fx-background-color: ivory; " +
@@ -292,15 +307,16 @@ public class Helpers {
         return label;
     }
 
-    public static Button createBackButtonLayout(Circle circleAsset, Image backImage) {
+    public static Button createBackButtonLayout(Circle circleAsset, Image backImage, Insets padding) {
         circleAsset = new Circle(20);
         circleAsset.setFill(new ImagePattern(backImage));
         Button button = new Button();
         button.setGraphic(circleAsset); // Sets the image of the back button in scene 2 to the back button image.
-        button.setStyle("-fx-background-color:transparent; -fx-border-color: transparent; -fx-padding: 67px 150");
-//        button.setMinSize(30, 30);
-//        button.setMaxSize(30, 30);
+        button.setStyle("-fx-background-color:transparent; -fx-border-color: transparent;");
+        button.setMinSize(30, 30);
+        button.setMaxSize(30, 30);
         button.setAlignment(Pos.TOP_LEFT);
+        button.setPadding(padding);
 
 
 
@@ -308,10 +324,11 @@ public class Helpers {
     }
 
     // Forward Button Addition into the next scene to remove redundant code.
-    public static void addForwardButtonAsChild(Button button, StackPane intoRoot) {
+    public static void addForwardButtonAsChild(Button button, StackPane intoRoot, boolean visible) {
         if (!intoRoot.getChildren().contains(button)) {
             intoRoot.getChildren().add(button);
-            StackPane.setAlignment(button, Pos.CENTER_RIGHT);
+            button.setVisible(visible);
+            intoRoot.setAlignment(button, Pos.CENTER_RIGHT);
         }
     }
 
@@ -322,4 +339,28 @@ public class Helpers {
         }
     }
 
+    public static void disappearAnimation(Node node, Boolean pinPlaced) {
+        if (!pinPlaced) {
+            node.setDisable(true);
+            FadeTransition fade = new FadeTransition(Duration.millis(700), node);
+            fade.setFromValue(node.getOpacity());
+            fade.setToValue(0);
+            fade.setOnFinished(e -> node.setVisible(false));
+            fade.play();
+        }
+    }
+
+    public static void appearAnimation(Node node, Boolean pinPlaced) {
+        if (!pinPlaced) {
+            node.setVisible(true);
+            node.setDisable(true);
+            FadeTransition fade = new FadeTransition(Duration.millis(700), node);
+            fade.setFromValue(0);
+            fade.setToValue(1);
+            fade.setOnFinished(e -> node.setDisable(false));
+            fade.play();
+        }
+    }
+
 }
+

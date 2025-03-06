@@ -5,8 +5,6 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -18,9 +16,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.*;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -64,9 +59,13 @@ public class Main extends Application {
     private Rectangle AFMap;
     private Rectangle OCMap;
 
+
+
     public static StackPane activeRect; // Tracks which rectangle in the main menu is currently being displayed.
 
     /// Buttons
+    ///
+    // Main Menu Scene
     private Button beginPlanningButton;
     private Button creditsButton;
     private Button projectInfoButton;
@@ -91,10 +90,6 @@ public class Main extends Application {
     private Button OCButton;
 
     /// Labels
-    // Main Menu Scene
-
-    // Firm Picking Scene
-    private Label firmPickerGuideLabel;
 
     // Region Pick Scene
     private Label regionPickGuideLabel;
@@ -142,6 +137,9 @@ public class Main extends Application {
     private final Color IVORY = Color.rgb(255,255,240);
     private final Color DARK_IVORY = Color.rgb(180,180,169);
 
+    private static final Insets backButtonPadding = new Insets(67,0,0,150);
+    private static final Insets forwardButtonPadding = new Insets(0,0,0,150);
+
     /// ENUMS
 
     // These two account for if the pin is placed or not, and if the animation for the pin being placed was executed.
@@ -149,56 +147,26 @@ public class Main extends Application {
     Boolean pinPlacedAnimationExecuted = false;
 
     // These two account for the region whenever the user goes back from score results to the map in the region they picked.
-
     Scene intoScene;
     StackPane intoRoot;
 
 
-
-    /// ACCESSOR METHODS
-
-    public Boolean getPinPlaced() {
-        return pinPlaced;
-    }
-
-    public Boolean getPinPlacedAnimationExecuted() {
-        return pinPlacedAnimationExecuted;
-    }
-
-    public Scene getIntoScene() {
-        return intoScene;
-    }
-
-    public StackPane getIntoRoot() {
-        return intoRoot;
-    }
-
-
     /// MUTATOR METHODS
 
-    public void setPinPlaced(Boolean bool) {
-        pinPlaced = bool;
-    }
-
-    public void setPinPlacedAnimationExecuted(Boolean bool) {
-        pinPlacedAnimationExecuted = bool;
-    }
-
-    public void setIntoScene(Scene scene) {
-        intoScene = scene;
-    }
-    public void setPinPlaced(StackPane root) {
-        intoRoot = root;
-    }
-
+    /**
+     * Mutator method that allows the Helpers class to modify activeRect to properly run portions of its code.
+     * @param active
+     */
     public static void setActiveRect(StackPane active) {
         activeRect = active;
     }
+
 
     /// ///--------------------------------------------------------------------------------------------------------/// ///
     /**
      * The entry point for the application.
      * Initializes the stage, scenes, buttons, and their corresponding actions.
+     * @param stage The window of which everything is viewed on.
      */
     @Override
     public void start(Stage stage) throws IOException {
@@ -305,16 +273,16 @@ public class Main extends Application {
             /// Back Buttons
 
             // Back Button In Region Select Scene
-            backButtonToMainMenu = Helpers.createBackButtonLayout(backCircleMM, backImage);
+            backButtonToMainMenu = Helpers.createBackButtonLayout(backCircleMM, backImage, backButtonPadding);
 
             // Back Button In Map Scenes
 
-            backButtonToWorldMap = Helpers.createBackButtonLayout(backCircle, backImage);
+            backButtonToWorldMap = Helpers.createBackButtonLayout(backCircle, backImage, backButtonPadding);
 
-            backButtonToPrevRegionSR = Helpers.createBackButtonLayout(backCircleSR, backImage);
+            backButtonToPrevRegionSR = Helpers.createBackButtonLayout(backCircleSR, backImage, backButtonPadding);
 
-            forwardButtonToScoreResults = Helpers.createBackButtonLayout(forwardCircleSR, backImage);
-            forwardButtonToScoreResults.setScaleX(-1); // Flip image horizontally
+            forwardButtonToScoreResults = Helpers.createBackButtonLayout(forwardCircleSR, backImage, forwardButtonPadding);
+            forwardButtonToScoreResults.setScaleX(-1); // Flip button horizontally to flip the image to face forward.
 
             /// Region Pick Scene
             regionPickGuideLabel = Helpers.createHeaderLabel("Where do you want your firm?");
@@ -475,7 +443,7 @@ public class Main extends Application {
             StackPane rootSRScene = new StackPane();
             rootSRScene.getChildren().addAll(backButtonToPrevRegionSR, SRGuideLabel, SRLayout);
 
-            StackPane.setAlignment(backButtonToPrevRegionSR, Pos.CENTER_LEFT);
+            StackPane.setAlignment(backButtonToPrevRegionSR, Pos.TOP_LEFT);
             StackPane.setAlignment(SRGuideLabel, Pos.TOP_CENTER);
             StackPane.setMargin(SRGuideLabel, new Insets(50, 0, 0, 0));
 
@@ -501,13 +469,13 @@ public class Main extends Application {
             beginPlanningButton.setOnMouseClicked(e -> Helpers.fadeTransitionToScene(rootMainMenu, regionPickScene, rootRegionPick, stage));
             backButtonToMainMenu.setOnMouseClicked(e -> Helpers.fadeTransitionToScene(rootRegionPick, mainMenuScene, rootMainMenu, stage));
 
-            NAButton.setOnMouseClicked(e ->{Helpers.fadeTransitionToScene(rootRegionPick, NAScene, rootNAScene, stage); intoScene = NAScene; intoRoot = rootNAScene; Helpers.addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot); Helpers.addBackButtonAsChild(backButtonToWorldMap, intoRoot);});
-            SAButton.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(rootRegionPick, SAScene, rootSAScene, stage); intoScene = SAScene; intoRoot = rootSAScene; Helpers.addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot); Helpers.addBackButtonAsChild(backButtonToWorldMap, intoRoot);});
-            CAButton.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(rootRegionPick, CAScene, rootCAScene, stage); intoScene = CAScene; intoRoot = rootCAScene; Helpers.addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot); Helpers.addBackButtonAsChild(backButtonToWorldMap, intoRoot);});
-            EUButton.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(rootRegionPick, EUScene, rootEUScene, stage); intoScene = EUScene; intoRoot = rootEUScene; Helpers.addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot); Helpers.addBackButtonAsChild(backButtonToWorldMap, intoRoot);});
-            ASButton.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(rootRegionPick, ASIAScene, rootASIAScene, stage); intoScene = ASIAScene; intoRoot = rootASIAScene; Helpers.addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot); Helpers.addBackButtonAsChild(backButtonToWorldMap, intoRoot);});
-            AFButton.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(rootRegionPick, AFScene, rootAFScene, stage); intoScene = AFScene; intoRoot = rootAFScene; Helpers.addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot); Helpers.addBackButtonAsChild(backButtonToWorldMap, intoRoot);});
-            OCButton.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(rootRegionPick, OCScene, rootOCScene, stage); intoScene = OCScene; intoRoot = rootOCScene; Helpers.addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot); Helpers.addBackButtonAsChild(backButtonToWorldMap, intoRoot);});
+            NAButton.setOnMouseClicked(e ->{Helpers.fadeTransitionToScene(rootRegionPick, NAScene, rootNAScene, stage); intoScene = NAScene; intoRoot = rootNAScene; Helpers.addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot, false); Helpers.addBackButtonAsChild(backButtonToWorldMap, intoRoot);});
+            SAButton.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(rootRegionPick, SAScene, rootSAScene, stage); intoScene = SAScene; intoRoot = rootSAScene; Helpers.addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot, false); Helpers.addBackButtonAsChild(backButtonToWorldMap, intoRoot);});
+            CAButton.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(rootRegionPick, CAScene, rootCAScene, stage); intoScene = CAScene; intoRoot = rootCAScene; Helpers.addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot, false); Helpers.addBackButtonAsChild(backButtonToWorldMap, intoRoot);});
+            EUButton.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(rootRegionPick, EUScene, rootEUScene, stage); intoScene = EUScene; intoRoot = rootEUScene; Helpers.addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot, false); Helpers.addBackButtonAsChild(backButtonToWorldMap, intoRoot);});
+            ASButton.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(rootRegionPick, ASIAScene, rootASIAScene, stage); intoScene = ASIAScene; intoRoot = rootASIAScene; Helpers.addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot, false); Helpers.addBackButtonAsChild(backButtonToWorldMap, intoRoot);});
+            AFButton.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(rootRegionPick, AFScene, rootAFScene, stage); intoScene = AFScene; intoRoot = rootAFScene; Helpers.addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot, false); Helpers.addBackButtonAsChild(backButtonToWorldMap, intoRoot);});
+            OCButton.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(rootRegionPick, OCScene, rootOCScene, stage); intoScene = OCScene; intoRoot = rootOCScene; Helpers.addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot, false); Helpers.addBackButtonAsChild(backButtonToWorldMap, intoRoot);});
 
             forwardButtonToScoreResults.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(intoRoot, SRScene, rootSRScene, stage);});
             backButtonToPrevRegionSR.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(rootSRScene, intoScene, intoRoot, stage);});
@@ -585,11 +553,10 @@ public class Main extends Application {
         });
 
         rect.setOnMouseClicked(event -> {
+            Helpers.disappearAnimation(root.getChildren().get(root.getChildren().size()-1), pinPlaced);
+            Helpers.appearAnimation(root.getChildren().get(root.getChildren().size()-2), pinPlaced);
             pinPlaced = true;
             placePinAnimation(pin, circle);
-            if (root.getChildren().size() == 5) {
-                root.getChildren().remove(1);
-            }
 
         });
     }
