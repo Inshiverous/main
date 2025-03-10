@@ -492,12 +492,14 @@ public class Main extends Application {
 
             /// Stage
             // Final Touches & Scene shown
+            System.setProperty("prism.allowhidpi", "true");
+
             stage.setTitle("Firm Locator");
             stage.setScene(mainMenuScene);
 
             stage.setWidth(1280);
             stage.setHeight(960);
-            stage.setResizable(false);
+            stage.setResizable(true);
 
             stage.show();
     }
