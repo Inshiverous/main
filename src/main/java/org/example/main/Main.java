@@ -21,6 +21,16 @@ import javafx.util.Duration;
 
 import java.io.IOException;
 
+
+/*
+        TODO SET THE BOUNDS OF THE IMAGE OF WHERE THE PIN IS TO BE PLACED TO WHERE THE CENTER OF THE CIRCLE IS TO PREVENT OUT OF BOUNDS PLACEMENTS.
+ */
+
+
+
+
+
+
 /**
  * Main application class for the Firm Locator project.
  * This app features a main menu with a world map and different info sections.
@@ -265,8 +275,8 @@ public class Main extends Application {
 
             /// Main Menu Scene initialization
 
-            HBox rootMainMenu = new HBox(50, leftAppElementsLayout, stack);
-            Scene mainMenuScene = new Scene(rootMainMenu, 1280, 960);
+            HBox rootMainMenu = new HBox(300, leftAppElementsLayout, stack);
+            Scene mainMenuScene = new Scene(rootMainMenu, 1920, 1080);
 
 
 
@@ -296,19 +306,19 @@ public class Main extends Application {
             StackPane.setAlignment(backButtonToMainMenu,Pos.TOP_LEFT);
 
             // Region Scene Buttons
-            NAButton = Helpers.createButtonAt(rootRegionPick, "NA", 250, 300, Color.BLUE);
-            CAButton = Helpers.createButtonAt(rootRegionPick, "CA", 250, 400, Color.PURPLE);
-            SAButton = Helpers.createButtonAt(rootRegionPick, "SA", 350, 525, Color.RED);
-            EUButton = Helpers.createButtonAt(rootRegionPick, "EU", 575, 300, Color.GREEN);
-            AFButton = Helpers.createButtonAt(rootRegionPick, "AF", 565, 410, Color.ORANGE);
-            ASButton = Helpers.createButtonAt(rootRegionPick, "AS", 800, 325, Color.BROWN);
-            OCButton = Helpers.createButtonAt(rootRegionPick, "OC", 925, 560, Color.DARKCYAN);
+            NAButton = Helpers.createButtonAt(rootRegionPick, "NA", 375, 300, Color.BLUE);
+            CAButton = Helpers.createButtonAt(rootRegionPick, "CA", 350, 400, Color.PURPLE);
+            SAButton = Helpers.createButtonAt(rootRegionPick, "SA", 475, 525, Color.RED);
+            EUButton = Helpers.createButtonAt(rootRegionPick, "EU", 675, 300, Color.GREEN);
+            AFButton = Helpers.createButtonAt(rootRegionPick, "AF", 675, 410, Color.ORANGE);
+            ASButton = Helpers.createButtonAt(rootRegionPick, "AS", 900, 325, Color.BROWN);
+            OCButton = Helpers.createButtonAt(rootRegionPick, "OC", 1050, 560, Color.DARKCYAN);
 
             StackPane.setAlignment(regionPickGuideLabel, Pos.TOP_CENTER);
             StackPane.setMargin(regionPickGuideLabel, new Insets(50, 0, 0, 0));
 
             regionPickLayout.toBack();
-            Scene regionPickScene = new Scene(rootRegionPick, 1280, 960);
+            Scene regionPickScene = new Scene(rootRegionPick, 1920, 1080);
 
 
             /// Region Scenes
@@ -329,7 +339,7 @@ public class Main extends Application {
             StackPane.setMargin(NAGuideLabel, new Insets(50, 0, 0, 0));
 
             NALayout.toBack();
-            Scene NAScene = new Scene(rootNAScene, 1280, 960);
+            Scene NAScene = new Scene(rootNAScene, 1920, 1080);
 
 
             // Central America Scene
@@ -346,7 +356,7 @@ public class Main extends Application {
             StackPane.setMargin(CAGuideLabel, new Insets(50, 0, 0, 0));
 
             CALayout.toBack();
-            Scene CAScene = new Scene(rootCAScene, 1280, 960);
+            Scene CAScene = new Scene(rootCAScene, 1920, 1080);
 
 
             // South America Scene
@@ -363,7 +373,7 @@ public class Main extends Application {
             StackPane.setMargin(SAGuideLabel, new Insets(50, 0, 0, 0));
 
             SALayout.toBack();
-            Scene SAScene = new Scene(rootSAScene, 1280, 960);
+            Scene SAScene = new Scene(rootSAScene, 1920, 1080);
 
             // Europe Scene
 
@@ -380,7 +390,7 @@ public class Main extends Application {
             StackPane.setMargin(EUGuideLabel, new Insets(50, 0, 0, 0));
 
             EULayout.toBack();
-            Scene EUScene = new Scene(rootEUScene, 1280, 960);
+            Scene EUScene = new Scene(rootEUScene, 1920, 1080);
 
             // Africa Scene
 
@@ -397,7 +407,7 @@ public class Main extends Application {
             StackPane.setMargin(AFGuideLabel, new Insets(50, 0, 0, 0));
 
             AFLayout.toBack();
-            Scene AFScene = new Scene(rootAFScene, 1280, 960);
+            Scene AFScene = new Scene(rootAFScene, 1920, 1080);
 
             // Asia Scene
 
@@ -414,7 +424,7 @@ public class Main extends Application {
             StackPane.setMargin(ASGuideLabel, new Insets(50, 0, 0, 0));
 
             ASLayout.toBack();
-            Scene ASIAScene = new Scene(rootASIAScene, 1280, 960);
+            Scene ASIAScene = new Scene(rootASIAScene, 1920, 1080);
 
             // Oceania Scene
 
@@ -431,7 +441,7 @@ public class Main extends Application {
             StackPane.setMargin(OCGuideLabel, new Insets(50, 0, 0, 0));
 
             OCLayout.toBack();
-            Scene OCScene = new Scene(rootOCScene, 1280, 960);
+            Scene OCScene = new Scene(rootOCScene, 1920, 1080);
 
 
             // Score Results
@@ -448,7 +458,7 @@ public class Main extends Application {
             StackPane.setMargin(SRGuideLabel, new Insets(50, 0, 0, 0));
 
             SRLayout.toBack();
-            Scene SRScene = new Scene(rootSRScene, 1280, 960);
+            Scene SRScene = new Scene(rootSRScene, 1920, 1080);
 
 
             /// Mouse Events
@@ -497,9 +507,9 @@ public class Main extends Application {
             stage.setTitle("Firm Locator");
             stage.setScene(mainMenuScene);
 
-            stage.setWidth(1280);
-            stage.setHeight(960);
-            stage.setResizable(true);
+            stage.setWidth(1920);
+            stage.setHeight(1080);
+            stage.setResizable(false);
 
             stage.show();
     }
