@@ -215,27 +215,26 @@ public class Main extends Application {
         StackPane creditsInfoBox = Helpers.createRectanglePane(Color.BLACK, """
                 This project was made by
                 The Holy Trinity of Coding
-                a team consisting of Levi Daniel, Aeden Kramer, and Jon Cheever.\
+                a team consisting of Levi Daniel, Aeden Kramer, and Jon Cheever.
                 
-                
-                Our project is inspired by the
+                Our project is inspired by a
                 highlighted problem reported by
-                JustAuto (just-auto.com)
+                JustAuto (just-auto.com) of mass
+                raw material shortages worldwide.
                 
-                We got our firm locations from resource maps
-                posted by semiconductors.org and hcss.nl""", 20);
+                We got our firm locations from Google Maps and
+                various Wikipedia pages locating different
+                resources.""", 20);
 
         StackPane projectInfoBox = Helpers.createRectanglePane(Color.BLACK, """
                 This project addresses the widespread, present problem of\s
                 resource shortages in automotive industry, ranging from raw materials,\s
                 to semiconductors to the manufacturers of car parts.
                 
-                This project exists to encourage participation of new firms by displaying\s
-                an array of firms to help supply the vertical stages to automotive production.\s
-                
-                With healthy cooperation & participation in the market, shortages would
-                 fall and the automotive industry would \
-                skyrocket & boom in market value.""", 20);
+                This project exists to encourage participation in the market by allowing
+                users to play a simple game to locate certain natural resources and gain
+                knowledge on where to work in to combat shortages with the added labor
+                that comes with participation.  """, 20);
 
             mainMenuRectangle = Helpers.createRectanglePane(Color.BLACK, "THE FIRM STARTUP", 60);
 
