@@ -5,6 +5,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -16,20 +17,14 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.*;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.IOException;
-
-
-/*
-        TODO SET THE BOUNDS OF THE IMAGE OF WHERE THE PIN IS TO BE PLACED TO WHERE THE CENTER OF THE CIRCLE IS TO PREVENT OUT OF BOUNDS PLACEMENTS.
- */
-
-
-
-
-
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Main application class for the Firm Locator project.
@@ -38,82 +33,20 @@ import java.io.IOException;
  */
 public class Main extends Application {
 
-    /// --- Images
-
-    private Image worldMapImage;
-    private Image backImage;
-
-    private Image northAmericaImage;
-    private Image centralAmericaImage;
-    private Image southAmericaImage;
-    private Image europeImage;
-    private Image asiaImage;
-    private Image africaImage;
-    private Image oceaniaImage;
-
     ///// --- Shape Elements
 
     /// Rectangles
     private StackPane mainMenuRectangle;
-    private StackPane worldMapMainMenuImageFrame;
-    private StackPane creditsInfoBox;
-    private StackPane projectInfoBox;
-
-    // Maps
-    private Rectangle worldMapRegionPickFrame;
-    private Rectangle NAMap;
-    private Rectangle CAMap;
-    private Rectangle SAMap;
-    private Rectangle EUMap;
-    private Rectangle ASMap;
-    private Rectangle AFMap;
-    private Rectangle OCMap;
-
 
 
     public static StackPane activeRect; // Tracks which rectangle in the main menu is currently being displayed.
 
-    /// Buttons
-    ///
-    // Main Menu Scene
-    private Button beginPlanningButton;
-    private Button creditsButton;
-    private Button projectInfoButton;
-
-    // Back buttons
-    private Button backButtonToMainMenu;
     private Button backButtonToWorldMap;
-
-    private Button backButtonToPrevRegionSR;
 
     // Forward Buttons
     private Button forwardButtonToScoreResults;
 
     // Region Pick Scene
-
-    private Button NAButton;
-    private Button CAButton; // Central America
-    private Button SAButton;
-    private Button EUButton;
-    private Button AFButton;
-    private Button ASButton;
-    private Button OCButton;
-
-    /// Labels
-
-    // Region Pick Scene
-    private Label regionPickGuideLabel;
-
-    // Map Scenes
-    private Label NAGuideLabel;
-    private Label SAGuideLabel;
-    private Label CAGuideLabel;
-    private Label EUGuideLabel;
-    private Label ASGuideLabel;
-    private Label AFGuideLabel;
-    private Label OCGuideLabel;
-
-    private Label SRGuideLabel;
 
     /// Circles
     ///
@@ -122,18 +55,9 @@ public class Main extends Application {
     // Back Circle Assets
     private Circle backCircleMM; // to go back to main menu
 
-    private Circle backCircleFP; // to go back to firm picker
-
     private Circle backCircle;
 
-    // to go back to region picker
-    private Circle backCircleNA;
-    private Circle backCircleCA;
-    private Circle backCircleSA;
-    private Circle backCircleEU;
-    private Circle backCircleAF;
-    private Circle backCircleAS;
-    private Circle backCircleOC;
+
 
     // to go back to region, an enum will account for the region to go back to.
     private Circle backCircleSR;
@@ -141,6 +65,11 @@ public class Main extends Application {
 
     // Forward Circle Assets
     private Circle forwardCircleSR;
+    private Circle forwardCircleToMM;
+
+
+
+
 
     /// Styles
 
@@ -153,23 +82,72 @@ public class Main extends Application {
     /// ENUMS
 
     // These two account for if the pin is placed or not, and if the animation for the pin being placed was executed.
-    Boolean pinPlaced = false;
-    Boolean pinPlacedAnimationExecuted = false;
+    public static Boolean pinPlaced = false;
+    public static Boolean pinPlacedAnimationExecuted = false;
 
     // These two account for the region whenever the user goes back from score results to the map in the region they picked.
     Scene intoScene;
     StackPane intoRoot;
+
+    public static int currentRegionIndex = 0;
+    public static String currentResourceType = "";
+    public static int currentResourceTypeIndex = 0;
+    public static String currentRegion = "";
+
+    public static Integer score = 0;
+
+
+    /// Regions & Their Firms
+    public static int[][] NAResources = Algorithms.parseFile("NA.txt");
+    public static int[][] CAResources = Algorithms.parseFile("CA.txt");
+    public static int[][] SAResources = Algorithms.parseFile("SA.txt");
+    public static int[][] EUResources = Algorithms.parseFile("EU.txt");
+    public static int[][] AFResources = Algorithms.parseFile("AF.txt");
+    public static int[][] ASResources = Algorithms.parseFile("AS.txt");
+    public static int[][] OCResources = Algorithms.parseFile("OC.txt");
+
+    public ArrayList<int[][]> regionResources = new ArrayList<>();
+
+    public static final String[] resourceTypes = {"Iron","Aluminum","Plastic","Rubber","Propylene","Sand", "Copper", "Lead", "Zinc", "Textiles"};
+    public static final String[] regionsList = {"North America", "Central America", "South America", "Europe", "Africa", "Asia", "Oceania"};
 
 
     /// MUTATOR METHODS
 
     /**
      * Mutator method that allows the Helpers class to modify activeRect to properly run portions of its code.
-     * @param active
+     * @param active the current element set that is to be shown in the main menu
      */
     public static void setActiveRect(StackPane active) {
         activeRect = active;
     }
+
+    public static void setCurrentRegion(int region) {
+        currentRegionIndex = region;
+        currentRegion = regionsList[region];
+        currentResourceTypeIndex = (int) (Math.random() * 10);
+        currentResourceType = resourceTypes[currentResourceTypeIndex];
+    }
+
+    public static void setScore(int newScore) {
+        score = newScore;
+    }
+
+    public static void reset() {
+        pinPlaced = false;
+        pinPlacedAnimationExecuted = false;
+        currentRegionIndex = 0;
+        currentResourceType = "";
+        currentResourceTypeIndex = 0;
+        currentRegion = "";
+        score = 0;
+    }
+
+    ///  Labels
+
+    public static Label SRScoreStatsLabel = Helpers.createHeaderLabel("Region: " + currentRegion + "\n" +
+            "Resource Type: " + currentResourceType + "\n" +
+            "Score: " + score);
 
 
     /// ///--------------------------------------------------------------------------------------------------------/// ///
@@ -180,68 +158,84 @@ public class Main extends Application {
      */
     @Override
     public void start(Stage stage) throws IOException {
+        for (int[][] ints : Arrays.asList(NAResources, CAResources, SAResources, EUResources, AFResources, ASResources, OCResources)) {
+            regionResources.add(ints);
+        }
 
 
-            // Assigns image variables their images to be loaded.
-            worldMapImage = getImage("WMBlank.png");
-            backImage = getImage("back.jpg");
+        // Assigns image variables their images to be loaded.
+        /// --- Images
+        Image worldMapImage = getImage("WMBlank.png");
+        Image backImage = getImage("back.jpg");
 
-            northAmericaImage = getImage("NABlank.jpg");
-            centralAmericaImage = getImage("CABlank.jpg");
-            southAmericaImage = getImage("SABlank.jpg");
-            europeImage = getImage("EUBlank.jpg");
-            asiaImage = getImage("ASBlank.jpg");
-            africaImage = getImage("AFBlank.jpg");
-            oceaniaImage = getImage("OCBlank.jpg");
+        Image northAmericaImage = getImage("NABlank.jpg");
+        Image centralAmericaImage = getImage("CABlank.jpg");
+        Image southAmericaImage = getImage("SABlank.jpg");
+        Image europeImage = getImage("EUBlank.jpg");
+        Image asiaImage = getImage("ASBlank.jpg");
+        Image africaImage = getImage("AFBlank.jpg");
+        Image oceaniaImage = getImage("OCBlank.jpg");
 
             /// Create shapes & assign their images
 
             // 3 : 4 or 4 : 3 (x200)
-            NAMap = new Rectangle(800, 600);
+        Rectangle NAMap = new Rectangle(800, 600);
             NAMap.setFill(new ImagePattern(northAmericaImage));
 
-            CAMap = new Rectangle(800, 600);
+        Rectangle CAMap = new Rectangle(800, 600);
             CAMap.setFill(new ImagePattern(centralAmericaImage));
 
-            SAMap = new Rectangle(800, 600);
+        Rectangle SAMap = new Rectangle(800, 600);
             SAMap.setFill(new ImagePattern(southAmericaImage));
 
-            EUMap = new Rectangle(800, 600);
+        Rectangle EUMap = new Rectangle(800, 600);
             EUMap.setFill(new ImagePattern(europeImage));
 
-            ASMap = new Rectangle(800, 600);
+        Rectangle ASMap = new Rectangle(800, 600);
             ASMap.setFill(new ImagePattern(asiaImage));
 
-            AFMap = new Rectangle(800, 600);
+        Rectangle AFMap = new Rectangle(800, 600);
             AFMap.setFill(new ImagePattern(africaImage));
 
-            OCMap = new Rectangle(800, 600);
+        Rectangle OCMap = new Rectangle(800, 600);
             OCMap.setFill(new ImagePattern(oceaniaImage));
 
 
             // region picking scene
-            worldMapRegionPickFrame = new Rectangle(1000, 497);
+        // Maps
+        Rectangle worldMapRegionPickFrame = new Rectangle(1000, 497);
             worldMapRegionPickFrame.setFill(new ImagePattern(worldMapImage));
+
 
 
             ////---- App Layout
 
             // Main Menu
-            worldMapMainMenuImageFrame = Helpers.createRectanglePane(Color.BLACK, worldMapImage);
-            creditsInfoBox = Helpers.createRectanglePane(Color.BLACK, "This project was made by\nThe Holy Trinity of Coding\n" +
-                                                                   "a team consisting of Levi Daniel, Aeden Kramer, and Jon Cheever." +
-                                                                   "\n\nOur project is inspired by the\nhighlighted problem reported by\n" +
-                                                                   "JustAuto (just-auto.com)\n\n"+
+        StackPane worldMapMainMenuImageFrame = Helpers.createRectanglePane(Color.BLACK, worldMapImage);
+        StackPane creditsInfoBox = Helpers.createRectanglePane(Color.BLACK, """
+                This project was made by
+                The Holy Trinity of Coding
+                a team consisting of Levi Daniel, Aeden Kramer, and Jon Cheever.\
+                
+                
+                Our project is inspired by the
+                highlighted problem reported by
+                JustAuto (just-auto.com)
+                
+                We got our firm locations from resource maps
+                posted by semiconductors.org and hcss.nl""", 20);
 
-                                                                   "We got our firm locations from resource maps\nposted by semiconductors.org and hcss.nl", 20);
-
-            projectInfoBox = Helpers.createRectanglePane(Color.BLACK, "This project addresses the widespread, present problem of \n" +
-                                                                   "resource shortages in automotive industry, ranging from raw materials, \n" +
-                                                                   "to semiconductors to the manufacturers of car parts.\n\n"+
-                                                                   "This project exists to encourage participation of new firms by displaying \n" +
-                                                                   "an array of firms to help supply the vertical stages to automotive production. \n\n" +
-                                                                   "With healthy cooperation & participation in the market, shortages would\n fall and the automotive industry would " +
-                                                                   "skyrocket & boom in market value.", 20);
+        StackPane projectInfoBox = Helpers.createRectanglePane(Color.BLACK, """
+                This project addresses the widespread, present problem of\s
+                resource shortages in automotive industry, ranging from raw materials,\s
+                to semiconductors to the manufacturers of car parts.
+                
+                This project exists to encourage participation of new firms by displaying\s
+                an array of firms to help supply the vertical stages to automotive production.\s
+                
+                With healthy cooperation & participation in the market, shortages would
+                 fall and the automotive industry would \
+                skyrocket & boom in market value.""", 20);
 
             mainMenuRectangle = Helpers.createRectanglePane(Color.BLACK, "THE FIRM STARTUP", 60);
 
@@ -257,10 +251,13 @@ public class Main extends Application {
             Helpers.setContentOpacity(projectInfoBox, 0);
             Helpers.setContentOpacity(mainMenuRectangle, 1);
 
-            // Initialize Main Menu Butons
-            beginPlanningButton = Helpers.createButton("Begin Planning", worldMapMainMenuImageFrame, stack, activeRect);
-            creditsButton = Helpers.createButton("Credits/Sources", creditsInfoBox, stack, activeRect);
-            projectInfoButton = Helpers.createButton("Project Info.", projectInfoBox, stack, activeRect);
+            // Initialize Main Menu Buttons
+        /// Buttons
+        ///
+        // Main Menu Scene
+        Button beginPlanningButton = Helpers.createButton("Begin Planning", worldMapMainMenuImageFrame, stack, activeRect);
+        Button creditsButton = Helpers.createButton("Credits/Sources", creditsInfoBox, stack, activeRect);
+        Button projectInfoButton = Helpers.createButton("Project Info.", projectInfoBox, stack, activeRect);
 
             // Button Layout
             VBox leftAppElementsLayout = new VBox(90);
@@ -275,7 +272,7 @@ public class Main extends Application {
 
             /// Main Menu Scene initialization
 
-            HBox rootMainMenu = new HBox(300, leftAppElementsLayout, stack);
+            HBox rootMainMenu = new HBox(700, leftAppElementsLayout, stack);
             Scene mainMenuScene = new Scene(rootMainMenu, 1920, 1080);
 
 
@@ -283,36 +280,47 @@ public class Main extends Application {
             /// Back Buttons
 
             // Back Button In Region Select Scene
-            backButtonToMainMenu = Helpers.createBackButtonLayout(backCircleMM, backImage, backButtonPadding);
+        // Back buttons
+        Button backButtonToMainMenu = Helpers.createBackButtonLayout(backCircleMM, backImage, backButtonPadding);
 
             // Back Button In Map Scenes
 
             backButtonToWorldMap = Helpers.createBackButtonLayout(backCircle, backImage, backButtonPadding);
 
-            backButtonToPrevRegionSR = Helpers.createBackButtonLayout(backCircleSR, backImage, backButtonPadding);
+        Button backButtonToPrevRegionSR = Helpers.createBackButtonLayout(backCircleSR, backImage, backButtonPadding);
 
             forwardButtonToScoreResults = Helpers.createBackButtonLayout(forwardCircleSR, backImage, forwardButtonPadding);
             forwardButtonToScoreResults.setScaleX(-1); // Flip button horizontally to flip the image to face forward.
 
-            /// Region Pick Scene
-            regionPickGuideLabel = Helpers.createHeaderLabel("Where do you want your firm?");
+        Button forwardButtonToMainMenu = Helpers.createBackButtonLayout(forwardCircleToMM, backImage, forwardButtonPadding);
+            forwardButtonToMainMenu.setScaleX(-1); // Flip button horizontally to flip the image to face forward.
 
-            VBox regionPickLayout = new VBox(10, worldMapRegionPickFrame);
+            /// Region Pick Scene
+        /// Labels
+        // Region Pick Scene
+        Label regionPickGuideLabel = Helpers.createHeaderLabel("Where do you want to go?");
+
+        StackPane worldMapRegionPickPane = new StackPane();
+            VBox regionPickLayout = new VBox(10, worldMapRegionPickPane);
             regionPickLayout.setStyle("-fx-padding: 20; -fx-alignment: center; -fx-font-size: 16;");
             regionPickLayout.setAlignment(Pos.CENTER);
 
             StackPane rootRegionPick = new StackPane();
-            rootRegionPick.getChildren().addAll(backButtonToMainMenu, regionPickGuideLabel, regionPickLayout);
-            StackPane.setAlignment(backButtonToMainMenu,Pos.TOP_LEFT);
+
 
             // Region Scene Buttons
-            NAButton = Helpers.createButtonAt(rootRegionPick, "NA", 375, 300, Color.BLUE);
-            CAButton = Helpers.createButtonAt(rootRegionPick, "CA", 350, 400, Color.PURPLE);
-            SAButton = Helpers.createButtonAt(rootRegionPick, "SA", 475, 525, Color.RED);
-            EUButton = Helpers.createButtonAt(rootRegionPick, "EU", 675, 300, Color.GREEN);
-            AFButton = Helpers.createButtonAt(rootRegionPick, "AF", 675, 410, Color.ORANGE);
-            ASButton = Helpers.createButtonAt(rootRegionPick, "AS", 900, 325, Color.BROWN);
-            OCButton = Helpers.createButtonAt(rootRegionPick, "OC", 1050, 560, Color.DARKCYAN);
+        Button NAButton = Helpers.createButtonAt(worldMapRegionPickPane, "NA", 600, 350, Color.BLUE);
+        Button CAButton = Helpers.createButtonAt(worldMapRegionPickPane, "CA", 550, 450, Color.PURPLE);
+        Button SAButton = Helpers.createButtonAt(worldMapRegionPickPane, "SA", 675, 575, Color.RED);
+        Button EUButton = Helpers.createButtonAt(worldMapRegionPickPane, "EU", 875, 350, Color.GREEN);
+        Button AFButton = Helpers.createButtonAt(worldMapRegionPickPane, "AF", 900, 460, Color.ORANGE);
+        Button ASButton = Helpers.createButtonAt(worldMapRegionPickPane, "AS", 1100, 375, Color.BROWN);
+        Button OCButton = Helpers.createButtonAt(worldMapRegionPickPane, "OC", 1250, 610, Color.DARKCYAN);
+            worldMapRegionPickPane.getChildren().add(worldMapRegionPickFrame);
+            worldMapRegionPickFrame.toBack();
+
+            rootRegionPick.getChildren().addAll(worldMapRegionPickPane, backButtonToMainMenu, regionPickGuideLabel, regionPickLayout);
+            StackPane.setAlignment(backButtonToMainMenu,Pos.TOP_LEFT);
 
             StackPane.setAlignment(regionPickGuideLabel, Pos.TOP_CENTER);
             StackPane.setMargin(regionPickGuideLabel, new Insets(50, 0, 0, 0));
@@ -322,11 +330,12 @@ public class Main extends Application {
 
 
             /// Region Scenes
-            String regionScenesHeaderLabel = "Place your firm wherever!";
+            String regionScenesHeaderLabel = "Find this resource: " + currentResourceType;
 
             // North America Scene
 
-            NAGuideLabel = Helpers.createHeaderLabel(regionScenesHeaderLabel);
+        // Map Scenes
+        Label NAGuideLabel = Helpers.createHeaderLabel(regionScenesHeaderLabel);
 
             VBox NALayout = new VBox(10, NAMap);
             NALayout.setStyle("-fx-padding: 20; -fx-alignment: center; -fx-font-size: 16;");
@@ -343,7 +352,7 @@ public class Main extends Application {
 
 
             // Central America Scene
-            CAGuideLabel = Helpers.createHeaderLabel(regionScenesHeaderLabel);
+        Label CAGuideLabel = Helpers.createHeaderLabel(regionScenesHeaderLabel);
 
             VBox CALayout = new VBox(10, CAMap);
             CALayout.setStyle("-fx-padding: 20; -fx-alignment: center; -fx-font-size: 16;");
@@ -360,7 +369,7 @@ public class Main extends Application {
 
 
             // South America Scene
-            SAGuideLabel = Helpers.createHeaderLabel(regionScenesHeaderLabel);
+        Label SAGuideLabel = Helpers.createHeaderLabel(regionScenesHeaderLabel);
 
             VBox SALayout = new VBox(10, SAMap);
             SALayout.setStyle("-fx-padding: 20; -fx-alignment: center; -fx-font-size: 16;");
@@ -377,7 +386,7 @@ public class Main extends Application {
 
             // Europe Scene
 
-            EUGuideLabel = Helpers.createHeaderLabel(regionScenesHeaderLabel);
+        Label EUGuideLabel = Helpers.createHeaderLabel(regionScenesHeaderLabel);
 
             VBox EULayout = new VBox(10, EUMap);
             EULayout.setStyle("-fx-padding: 20; -fx-alignment: center; -fx-font-size: 16;");
@@ -394,7 +403,7 @@ public class Main extends Application {
 
             // Africa Scene
 
-            AFGuideLabel = Helpers.createHeaderLabel(regionScenesHeaderLabel);
+        Label AFGuideLabel = Helpers.createHeaderLabel(regionScenesHeaderLabel);
 
             VBox AFLayout = new VBox(10, AFMap);
             AFLayout.setStyle("-fx-padding: 20; -fx-alignment: center; -fx-font-size: 16;");
@@ -411,7 +420,7 @@ public class Main extends Application {
 
             // Asia Scene
 
-            ASGuideLabel = Helpers.createHeaderLabel(regionScenesHeaderLabel);
+        Label ASGuideLabel = Helpers.createHeaderLabel(regionScenesHeaderLabel);
 
             VBox ASLayout = new VBox(10, ASMap);
             ASLayout.setStyle("-fx-padding: 20; -fx-alignment: center; -fx-font-size: 16;");
@@ -428,7 +437,7 @@ public class Main extends Application {
 
             // Oceania Scene
 
-            OCGuideLabel = Helpers.createHeaderLabel(regionScenesHeaderLabel);
+        Label OCGuideLabel = Helpers.createHeaderLabel(regionScenesHeaderLabel);
 
             VBox OCLayout = new VBox(10, OCMap);
             OCLayout.setStyle("-fx-padding: 20; -fx-alignment: center; -fx-font-size: 16;");
@@ -445,16 +454,19 @@ public class Main extends Application {
 
 
             // Score Results
-            SRGuideLabel = Helpers.createHeaderLabel("Score Results:");
+            Label SRGuideLabel = Helpers.createHeaderLabel("Score Results:");
+
 
             VBox SRLayout = new VBox(10);
             SRLayout.setAlignment(Pos.CENTER);
 
             StackPane rootSRScene = new StackPane();
-            rootSRScene.getChildren().addAll(backButtonToPrevRegionSR, SRGuideLabel, SRLayout);
+            rootSRScene.getChildren().addAll(backButtonToPrevRegionSR, SRGuideLabel, SRScoreStatsLabel, SRLayout, forwardButtonToMainMenu);
 
             StackPane.setAlignment(backButtonToPrevRegionSR, Pos.TOP_LEFT);
+            StackPane.setAlignment(forwardButtonToMainMenu, Pos.CENTER_RIGHT);
             StackPane.setAlignment(SRGuideLabel, Pos.TOP_CENTER);
+            StackPane.setAlignment(SRScoreStatsLabel, Pos.CENTER);
             StackPane.setMargin(SRGuideLabel, new Insets(50, 0, 0, 0));
 
             SRLayout.toBack();
@@ -479,16 +491,18 @@ public class Main extends Application {
             beginPlanningButton.setOnMouseClicked(e -> Helpers.fadeTransitionToScene(rootMainMenu, regionPickScene, rootRegionPick, stage));
             backButtonToMainMenu.setOnMouseClicked(e -> Helpers.fadeTransitionToScene(rootRegionPick, mainMenuScene, rootMainMenu, stage));
 
-            NAButton.setOnMouseClicked(e ->{Helpers.fadeTransitionToScene(rootRegionPick, NAScene, rootNAScene, stage); intoScene = NAScene; intoRoot = rootNAScene; Helpers.addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot, false); Helpers.addBackButtonAsChild(backButtonToWorldMap, intoRoot);});
-            SAButton.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(rootRegionPick, SAScene, rootSAScene, stage); intoScene = SAScene; intoRoot = rootSAScene; Helpers.addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot, false); Helpers.addBackButtonAsChild(backButtonToWorldMap, intoRoot);});
-            CAButton.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(rootRegionPick, CAScene, rootCAScene, stage); intoScene = CAScene; intoRoot = rootCAScene; Helpers.addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot, false); Helpers.addBackButtonAsChild(backButtonToWorldMap, intoRoot);});
-            EUButton.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(rootRegionPick, EUScene, rootEUScene, stage); intoScene = EUScene; intoRoot = rootEUScene; Helpers.addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot, false); Helpers.addBackButtonAsChild(backButtonToWorldMap, intoRoot);});
-            ASButton.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(rootRegionPick, ASIAScene, rootASIAScene, stage); intoScene = ASIAScene; intoRoot = rootASIAScene; Helpers.addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot, false); Helpers.addBackButtonAsChild(backButtonToWorldMap, intoRoot);});
-            AFButton.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(rootRegionPick, AFScene, rootAFScene, stage); intoScene = AFScene; intoRoot = rootAFScene; Helpers.addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot, false); Helpers.addBackButtonAsChild(backButtonToWorldMap, intoRoot);});
-            OCButton.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(rootRegionPick, OCScene, rootOCScene, stage); intoScene = OCScene; intoRoot = rootOCScene; Helpers.addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot, false); Helpers.addBackButtonAsChild(backButtonToWorldMap, intoRoot);});
+            NAButton.setOnMouseClicked(e ->{Helpers.fadeTransitionToScene(rootRegionPick, NAScene, rootNAScene, stage); intoScene = NAScene; intoRoot = rootNAScene; Helpers.addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot, false); Helpers.addBackButtonAsChild(backButtonToWorldMap, intoRoot); setCurrentRegion(0); NAGuideLabel.setText("Find this resource: " + currentResourceType);});
+            SAButton.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(rootRegionPick, SAScene, rootSAScene, stage); intoScene = SAScene; intoRoot = rootSAScene; Helpers.addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot, false); Helpers.addBackButtonAsChild(backButtonToWorldMap, intoRoot); setCurrentRegion(2); SAGuideLabel.setText("Find this resource: " + currentResourceType);});
+            CAButton.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(rootRegionPick, CAScene, rootCAScene, stage); intoScene = CAScene; intoRoot = rootCAScene; Helpers.addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot, false); Helpers.addBackButtonAsChild(backButtonToWorldMap, intoRoot); setCurrentRegion(1); CAGuideLabel.setText("Find this resource: " + currentResourceType);});
+            EUButton.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(rootRegionPick, EUScene, rootEUScene, stage); intoScene = EUScene; intoRoot = rootEUScene; Helpers.addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot, false); Helpers.addBackButtonAsChild(backButtonToWorldMap, intoRoot); setCurrentRegion(3); EUGuideLabel.setText("Find this resource: " + currentResourceType);});
+            ASButton.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(rootRegionPick, ASIAScene, rootASIAScene, stage); intoScene = ASIAScene; intoRoot = rootASIAScene; Helpers.addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot, false); Helpers.addBackButtonAsChild(backButtonToWorldMap, intoRoot); setCurrentRegion(5); ASGuideLabel.setText("Find this resource: " + currentResourceType);});
+            AFButton.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(rootRegionPick, AFScene, rootAFScene, stage); intoScene = AFScene; intoRoot = rootAFScene; Helpers.addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot, false); Helpers.addBackButtonAsChild(backButtonToWorldMap, intoRoot); setCurrentRegion(4); AFGuideLabel.setText("Find this resource: " + currentResourceType);});
+            OCButton.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(rootRegionPick, OCScene, rootOCScene, stage); intoScene = OCScene; intoRoot = rootOCScene; Helpers.addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot, false); Helpers.addBackButtonAsChild(backButtonToWorldMap, intoRoot); setCurrentRegion(6); OCGuideLabel.setText("Find this resource: " + currentResourceType);});
 
             forwardButtonToScoreResults.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(intoRoot, SRScene, rootSRScene, stage);});
             backButtonToPrevRegionSR.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(rootSRScene, intoScene, intoRoot, stage);});
+
+            forwardButtonToMainMenu.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(rootSRScene, mainMenuScene, rootMainMenu, stage); reset();});
 
 
             // Hovering over the region map reveals a pin & the circle radius.
@@ -530,12 +544,15 @@ public class Main extends Application {
 
 
         Circle circle = new Circle();
-        circle.setRadius(40);
+        circle.setRadius(5);
         circle.setFill(Color.BLUE);
         circle.setOpacity(0.5);
         circle.setStrokeWidth(3);
         circle.setStroke(Color.BLACK);
         circle.setVisible(false);
+
+
+
 
 
         root.getChildren().addAll(circle, pin);
@@ -596,6 +613,28 @@ public class Main extends Application {
 
         if (!pinPlacedAnimationExecuted) {
 
+//            int[][] currentRegionResource = ;
+
+            int circleXInt = (int) circle.getTranslateX();
+            int circleYInt = (int) circle.getTranslateY();
+
+
+            ///  Debug
+            System.out.println();
+            System.out.println(currentRegionIndex);
+            System.out.println(currentRegion);
+            System.out.println();
+            System.out.println(currentResourceTypeIndex);
+            System.out.println(currentResourceType);
+
+            ScoreCalculator scoreCalculator = new ScoreCalculator(circleXInt, circleYInt, regionResources.get(currentRegionIndex));
+
+            setScore(scoreCalculator.getPoints(regionResources.get(currentRegionIndex)));
+
+            SRScoreStatsLabel.setText("Region: " + currentRegion + "\n" +
+                                      "Resource Type: " + currentResourceType + "\n" +
+                                      "Score: " + score);
+
 
             // Get circle center coordinates
             double circleX = circle.getTranslateX();
@@ -607,8 +646,8 @@ public class Main extends Application {
 
             // Move pin to the center of the circle; Quadratic speed
             Path path = new Path();
-            path.getElements().add(new MoveTo(pin.getTranslateX()+20, pin.getTranslateY()));
-            path.getElements().add(new QuadCurveTo(pin.getTranslateX()+20, pin.getTranslateY() - 80, circleX+20, circleY));
+            path.getElements().add(new MoveTo(pin.getTranslateX() + 20, pin.getTranslateY()));
+            path.getElements().add(new QuadCurveTo(pin.getTranslateX() + 20, pin.getTranslateY() - 80, circleX + 20, circleY));
 
             PathTransition moveToCircle = new PathTransition(Duration.seconds(1), path, pin);
 
@@ -616,7 +655,10 @@ public class Main extends Application {
             moveToCircle.play();
 
             pinPlacedAnimationExecuted = true;
+
         }
+
+
 
     }
 
