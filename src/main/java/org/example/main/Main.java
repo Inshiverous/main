@@ -204,7 +204,7 @@ public class Main extends Application {
             // region picking scene
         // Maps
         Rectangle worldMapRegionPickFrame = new Rectangle(1000, 497);
-            worldMapRegionPickFrame.setFill(new ImagePattern(worldMapImage));
+        worldMapRegionPickFrame.setFill(new ImagePattern(worldMapImage));
 
 
 
@@ -240,8 +240,18 @@ public class Main extends Application {
 
             // Stack of all StackPanes to show them in layers
             StackPane stack = new StackPane(projectInfoBox, creditsInfoBox, worldMapMainMenuImageFrame, mainMenuRectangle);
-            stack.setAlignment(Pos.CENTER_RIGHT);
             stack.setPadding(new Insets(50));
+
+        // Ensure alignments apply properly
+        Platform.runLater(() -> {
+            StackPane.setAlignment(projectInfoBox, Pos.CENTER_RIGHT);
+            StackPane.setAlignment(creditsInfoBox, Pos.CENTER_RIGHT);
+            StackPane.setAlignment(mainMenuRectangle, Pos.CENTER_RIGHT);
+            StackPane.setAlignment(worldMapMainMenuImageFrame, Pos.CENTER_RIGHT);
+            worldMapMainMenuImageFrame.setMaxWidth(Double.MAX_VALUE);
+            worldMapMainMenuImageFrame.setMaxHeight(Double.MAX_VALUE);
+            worldMapMainMenuImageFrame.setTranslateX(400);
+        });
 
             // Set opacities to have mainMenuRectangle be the default.
             activeRect = mainMenuRectangle; // Initialize the active rectangle
@@ -271,7 +281,8 @@ public class Main extends Application {
 
             /// Main Menu Scene initialization
 
-            HBox rootMainMenu = new HBox(700, leftAppElementsLayout, stack);
+            StackPane rootMainMenu = new StackPane(leftAppElementsLayout, stack);
+            leftAppElementsLayout.toFront();
             Scene mainMenuScene = new Scene(rootMainMenu, 1920, 1080);
 
 
@@ -308,13 +319,13 @@ public class Main extends Application {
 
 
             // Region Scene Buttons
-        Button NAButton = Helpers.createButtonAt(worldMapRegionPickPane, "NA", 600, 350, Color.BLUE);
-        Button CAButton = Helpers.createButtonAt(worldMapRegionPickPane, "CA", 550, 450, Color.PURPLE);
-        Button SAButton = Helpers.createButtonAt(worldMapRegionPickPane, "SA", 675, 575, Color.RED);
-        Button EUButton = Helpers.createButtonAt(worldMapRegionPickPane, "EU", 875, 350, Color.GREEN);
-        Button AFButton = Helpers.createButtonAt(worldMapRegionPickPane, "AF", 900, 460, Color.ORANGE);
-        Button ASButton = Helpers.createButtonAt(worldMapRegionPickPane, "AS", 1100, 375, Color.BROWN);
-        Button OCButton = Helpers.createButtonAt(worldMapRegionPickPane, "OC", 1250, 610, Color.DARKCYAN);
+        Button NAButton = Helpers.createButtonAt(worldMapRegionPickPane, "NA", 370, 325, Color.BLUE);
+        Button CAButton = Helpers.createButtonAt(worldMapRegionPickPane, "CA", 385, 400, Color.PURPLE);
+        Button SAButton = Helpers.createButtonAt(worldMapRegionPickPane, "SA", 450, 500, Color.RED);
+        Button EUButton = Helpers.createButtonAt(worldMapRegionPickPane, "EU", 700, 300, Color.GREEN);
+        Button AFButton = Helpers.createButtonAt(worldMapRegionPickPane, "AF", 700, 430, Color.ORANGE);
+        Button ASButton = Helpers.createButtonAt(worldMapRegionPickPane, "AS", 950, 350, Color.BROWN);
+        Button OCButton = Helpers.createButtonAt(worldMapRegionPickPane, "OC", 1050, 560, Color.DARKCYAN);
             worldMapRegionPickPane.getChildren().add(worldMapRegionPickFrame);
             worldMapRegionPickFrame.toBack();
 
