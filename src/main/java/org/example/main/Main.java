@@ -145,9 +145,7 @@ public class Main extends Application {
 
     ///  Labels
 
-    public static Label SRScoreStatsLabel = Helpers.createHeaderLabel("Region: " + currentRegion + "\n" +
-            "Resource Type: " + currentResourceType + "\n" +
-            "Score: " + score);
+    public static Label SRScoreStatsLabel = Helpers.createHeaderLabel("Region: " + currentRegion + "\n" + "Score: " + score);
 
 
     /// ///--------------------------------------------------------------------------------------------------------/// ///
@@ -340,7 +338,7 @@ public class Main extends Application {
 
 
             /// Region Scenes
-            String regionScenesHeaderLabel = "Find this resource: " + currentResourceType;
+            String regionScenesHeaderLabel = "Place your pin!";
 
             // North America Scene
 
@@ -501,13 +499,13 @@ public class Main extends Application {
             beginPlanningButton.setOnMouseClicked(e -> Helpers.fadeTransitionToScene(rootMainMenu, regionPickScene, rootRegionPick, stage));
             backButtonToMainMenu.setOnMouseClicked(e -> Helpers.fadeTransitionToScene(rootRegionPick, mainMenuScene, rootMainMenu, stage));
 
-            NAButton.setOnMouseClicked(e ->{Helpers.fadeTransitionToScene(rootRegionPick, NAScene, rootNAScene, stage); intoScene = NAScene; intoRoot = rootNAScene; Helpers.addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot, false); Helpers.addBackButtonAsChild(backButtonToWorldMap, intoRoot); setCurrentRegion(0); NAGuideLabel.setText("Find this resource: " + currentResourceType);});
-            SAButton.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(rootRegionPick, SAScene, rootSAScene, stage); intoScene = SAScene; intoRoot = rootSAScene; Helpers.addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot, false); Helpers.addBackButtonAsChild(backButtonToWorldMap, intoRoot); setCurrentRegion(2); SAGuideLabel.setText("Find this resource: " + currentResourceType);});
-            CAButton.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(rootRegionPick, CAScene, rootCAScene, stage); intoScene = CAScene; intoRoot = rootCAScene; Helpers.addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot, false); Helpers.addBackButtonAsChild(backButtonToWorldMap, intoRoot); setCurrentRegion(1); CAGuideLabel.setText("Find this resource: " + currentResourceType);});
-            EUButton.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(rootRegionPick, EUScene, rootEUScene, stage); intoScene = EUScene; intoRoot = rootEUScene; Helpers.addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot, false); Helpers.addBackButtonAsChild(backButtonToWorldMap, intoRoot); setCurrentRegion(3); EUGuideLabel.setText("Find this resource: " + currentResourceType);});
-            ASButton.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(rootRegionPick, ASIAScene, rootASIAScene, stage); intoScene = ASIAScene; intoRoot = rootASIAScene; Helpers.addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot, false); Helpers.addBackButtonAsChild(backButtonToWorldMap, intoRoot); setCurrentRegion(5); ASGuideLabel.setText("Find this resource: " + currentResourceType);});
-            AFButton.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(rootRegionPick, AFScene, rootAFScene, stage); intoScene = AFScene; intoRoot = rootAFScene; Helpers.addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot, false); Helpers.addBackButtonAsChild(backButtonToWorldMap, intoRoot); setCurrentRegion(4); AFGuideLabel.setText("Find this resource: " + currentResourceType);});
-            OCButton.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(rootRegionPick, OCScene, rootOCScene, stage); intoScene = OCScene; intoRoot = rootOCScene; Helpers.addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot, false); Helpers.addBackButtonAsChild(backButtonToWorldMap, intoRoot); setCurrentRegion(6); OCGuideLabel.setText("Find this resource: " + currentResourceType);});
+            NAButton.setOnMouseClicked(e ->{Helpers.fadeTransitionToScene(rootRegionPick, NAScene, rootNAScene, stage); intoScene = NAScene; intoRoot = rootNAScene; Helpers.addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot, false); Helpers.addBackButtonAsChild(backButtonToWorldMap, intoRoot); setCurrentRegion(0);});
+            SAButton.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(rootRegionPick, SAScene, rootSAScene, stage); intoScene = SAScene; intoRoot = rootSAScene; Helpers.addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot, false); Helpers.addBackButtonAsChild(backButtonToWorldMap, intoRoot); setCurrentRegion(2);});
+            CAButton.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(rootRegionPick, CAScene, rootCAScene, stage); intoScene = CAScene; intoRoot = rootCAScene; Helpers.addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot, false); Helpers.addBackButtonAsChild(backButtonToWorldMap, intoRoot); setCurrentRegion(1);});
+            EUButton.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(rootRegionPick, EUScene, rootEUScene, stage); intoScene = EUScene; intoRoot = rootEUScene; Helpers.addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot, false); Helpers.addBackButtonAsChild(backButtonToWorldMap, intoRoot); setCurrentRegion(3);});
+            ASButton.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(rootRegionPick, ASIAScene, rootASIAScene, stage); intoScene = ASIAScene; intoRoot = rootASIAScene; Helpers.addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot, false); Helpers.addBackButtonAsChild(backButtonToWorldMap, intoRoot); setCurrentRegion(5);});
+            AFButton.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(rootRegionPick, AFScene, rootAFScene, stage); intoScene = AFScene; intoRoot = rootAFScene; Helpers.addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot, false); Helpers.addBackButtonAsChild(backButtonToWorldMap, intoRoot); setCurrentRegion(4); });
+            OCButton.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(rootRegionPick, OCScene, rootOCScene, stage); intoScene = OCScene; intoRoot = rootOCScene; Helpers.addForwardButtonAsChild(forwardButtonToScoreResults, intoRoot, false); Helpers.addBackButtonAsChild(backButtonToWorldMap, intoRoot); setCurrentRegion(6);});
 
             forwardButtonToScoreResults.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(intoRoot, SRScene, rootSRScene, stage);});
             backButtonToPrevRegionSR.setOnMouseClicked(e -> {Helpers.fadeTransitionToScene(rootSRScene, intoScene, intoRoot, stage);});
@@ -533,7 +531,7 @@ public class Main extends Application {
 
             stage.setWidth(1920);
             stage.setHeight(1080);
-            stage.setResizable(false);
+            stage.setResizable(true);
 
             stage.show();
     }
@@ -642,7 +640,6 @@ public class Main extends Application {
             setScore(scoreCalculator.getPoints(regionResources.get(currentRegionIndex)));
 
             SRScoreStatsLabel.setText("Region: " + currentRegion + "\n" +
-                                      "Resource Type: " + currentResourceType + "\n" +
                                       "Score: " + score);
 
 
